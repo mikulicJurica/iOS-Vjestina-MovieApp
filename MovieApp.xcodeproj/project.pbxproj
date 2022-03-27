@@ -9,21 +9,26 @@
 /* Begin PBXBuildFile section */
 		282AD29B27E9D6C4000402F5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 282AD29A27E9D6C4000402F5 /* AppDelegate.swift */; };
 		282AD29D27E9D6C4000402F5 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 282AD29C27E9D6C4000402F5 /* SceneDelegate.swift */; };
-		282AD29F27E9D6C4000402F5 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 282AD29E27E9D6C4000402F5 /* ViewController.swift */; };
-		282AD2A227E9D6C5000402F5 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 282AD2A027E9D6C5000402F5 /* Main.storyboard */; };
 		282AD2A427E9D6CB000402F5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 282AD2A327E9D6CB000402F5 /* Assets.xcassets */; };
 		282AD2A727E9D6CB000402F5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 282AD2A527E9D6CB000402F5 /* LaunchScreen.storyboard */; };
+		282AD2AF27E9DB5B000402F5 /* MovieDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 282AD2AE27E9DB5B000402F5 /* MovieDetailsViewController.swift */; };
+		282AD2B227E9E622000402F5 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 282AD2B127E9E622000402F5 /* SnapKit */; };
+		282AD2B427EA2346000402F5 /* TestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 282AD2B327EA2346000402F5 /* TestViewController.swift */; };
+		282AD2B927EB04D7000402F5 /* proximanova-regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 282AD2B727EB04D7000402F5 /* proximanova-regular.otf */; };
+		282AD2BA27EB04D7000402F5 /* proximanova-extrabold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 282AD2B827EB04D7000402F5 /* proximanova-extrabold.otf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		282AD29727E9D6C4000402F5 /* MovieApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MovieApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		282AD29A27E9D6C4000402F5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		282AD29C27E9D6C4000402F5 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		282AD29E27E9D6C4000402F5 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		282AD2A127E9D6C5000402F5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		282AD2A327E9D6CB000402F5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		282AD2A627E9D6CB000402F5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		282AD2A827E9D6CB000402F5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		282AD2AE27E9DB5B000402F5 /* MovieDetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieDetailsViewController.swift; sourceTree = "<group>"; };
+		282AD2B327EA2346000402F5 /* TestViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestViewController.swift; sourceTree = "<group>"; };
+		282AD2B727EB04D7000402F5 /* proximanova-regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "proximanova-regular.otf"; sourceTree = "<group>"; };
+		282AD2B827EB04D7000402F5 /* proximanova-extrabold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "proximanova-extrabold.otf"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -31,6 +36,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				282AD2B227E9E622000402F5 /* SnapKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -56,15 +62,25 @@
 		282AD29927E9D6C4000402F5 /* MovieApp */ = {
 			isa = PBXGroup;
 			children = (
+				282AD2BB27EB05C9000402F5 /* Fonts */,
 				282AD29A27E9D6C4000402F5 /* AppDelegate.swift */,
 				282AD29C27E9D6C4000402F5 /* SceneDelegate.swift */,
-				282AD29E27E9D6C4000402F5 /* ViewController.swift */,
-				282AD2A027E9D6C5000402F5 /* Main.storyboard */,
+				282AD2B327EA2346000402F5 /* TestViewController.swift */,
+				282AD2AE27E9DB5B000402F5 /* MovieDetailsViewController.swift */,
 				282AD2A327E9D6CB000402F5 /* Assets.xcassets */,
 				282AD2A527E9D6CB000402F5 /* LaunchScreen.storyboard */,
 				282AD2A827E9D6CB000402F5 /* Info.plist */,
 			);
 			path = MovieApp;
+			sourceTree = "<group>";
+		};
+		282AD2BB27EB05C9000402F5 /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				282AD2B827EB04D7000402F5 /* proximanova-extrabold.otf */,
+				282AD2B727EB04D7000402F5 /* proximanova-regular.otf */,
+			);
+			path = Fonts;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -83,6 +99,9 @@
 			dependencies = (
 			);
 			name = MovieApp;
+			packageProductDependencies = (
+				282AD2B127E9E622000402F5 /* SnapKit */,
+			);
 			productName = MovieApp;
 			productReference = 282AD29727E9D6C4000402F5 /* MovieApp.app */;
 			productType = "com.apple.product-type.application";
@@ -111,6 +130,9 @@
 				Base,
 			);
 			mainGroup = 282AD28E27E9D6C4000402F5;
+			packageReferences = (
+				282AD2B027E9E622000402F5 /* XCRemoteSwiftPackageReference "SnapKit" */,
+			);
 			productRefGroup = 282AD29827E9D6C4000402F5 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -126,8 +148,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				282AD2A727E9D6CB000402F5 /* LaunchScreen.storyboard in Resources */,
+				282AD2B927EB04D7000402F5 /* proximanova-regular.otf in Resources */,
+				282AD2BA27EB04D7000402F5 /* proximanova-extrabold.otf in Resources */,
 				282AD2A427E9D6CB000402F5 /* Assets.xcassets in Resources */,
-				282AD2A227E9D6C5000402F5 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -138,8 +161,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				282AD29F27E9D6C4000402F5 /* ViewController.swift in Sources */,
+				282AD2AF27E9DB5B000402F5 /* MovieDetailsViewController.swift in Sources */,
 				282AD29B27E9D6C4000402F5 /* AppDelegate.swift in Sources */,
+				282AD2B427EA2346000402F5 /* TestViewController.swift in Sources */,
 				282AD29D27E9D6C4000402F5 /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -147,14 +171,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
-		282AD2A027E9D6C5000402F5 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				282AD2A127E9D6C5000402F5 /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
 		282AD2A527E9D6CB000402F5 /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -293,7 +309,6 @@
 				INFOPLIST_FILE = MovieApp/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -320,7 +335,6 @@
 				INFOPLIST_FILE = MovieApp/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -358,6 +372,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		282AD2B027E9E622000402F5 /* XCRemoteSwiftPackageReference "SnapKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SnapKit/SnapKit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		282AD2B127E9E622000402F5 /* SnapKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 282AD2B027E9E622000402F5 /* XCRemoteSwiftPackageReference "SnapKit" */;
+			productName = SnapKit;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 282AD28F27E9D6C4000402F5 /* Project object */;
 }
