@@ -16,8 +16,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         window = UIWindow(windowScene: windowScene)
         window!.rootViewController = MovieDetailsViewController()
-        //window!.rootViewController = TestViewController()
-        //window!.rootViewController = CollectionViewController()
         window?.makeKeyAndVisible()
     }
 }
