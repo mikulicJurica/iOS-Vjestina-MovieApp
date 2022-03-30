@@ -13,7 +13,6 @@
 		282AD2A727E9D6CB000402F5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 282AD2A527E9D6CB000402F5 /* LaunchScreen.storyboard */; };
 		282AD2AF27E9DB5B000402F5 /* MovieDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 282AD2AE27E9DB5B000402F5 /* MovieDetailsViewController.swift */; };
 		282AD2B227E9E622000402F5 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 282AD2B127E9E622000402F5 /* SnapKit */; };
-		282AD2B427EA2346000402F5 /* TestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 282AD2B327EA2346000402F5 /* TestViewController.swift */; };
 		282AD2B927EB04D7000402F5 /* proximanova-regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 282AD2B727EB04D7000402F5 /* proximanova-regular.otf */; };
 		282AD2BA27EB04D7000402F5 /* proximanova-extrabold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 282AD2B827EB04D7000402F5 /* proximanova-extrabold.otf */; };
 /* End PBXBuildFile section */
@@ -26,7 +25,6 @@
 		282AD2A627E9D6CB000402F5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		282AD2A827E9D6CB000402F5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		282AD2AE27E9DB5B000402F5 /* MovieDetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieDetailsViewController.swift; sourceTree = "<group>"; };
-		282AD2B327EA2346000402F5 /* TestViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestViewController.swift; sourceTree = "<group>"; };
 		282AD2B727EB04D7000402F5 /* proximanova-regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "proximanova-regular.otf"; sourceTree = "<group>"; };
 		282AD2B827EB04D7000402F5 /* proximanova-extrabold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "proximanova-extrabold.otf"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -65,7 +63,6 @@
 				282AD2BB27EB05C9000402F5 /* Fonts */,
 				282AD29A27E9D6C4000402F5 /* AppDelegate.swift */,
 				282AD29C27E9D6C4000402F5 /* SceneDelegate.swift */,
-				282AD2B327EA2346000402F5 /* TestViewController.swift */,
 				282AD2AE27E9DB5B000402F5 /* MovieDetailsViewController.swift */,
 				282AD2A327E9D6CB000402F5 /* Assets.xcassets */,
 				282AD2A527E9D6CB000402F5 /* LaunchScreen.storyboard */,
@@ -163,7 +160,6 @@
 			files = (
 				282AD2AF27E9DB5B000402F5 /* MovieDetailsViewController.swift in Sources */,
 				282AD29B27E9D6C4000402F5 /* AppDelegate.swift in Sources */,
-				282AD2B427EA2346000402F5 /* TestViewController.swift in Sources */,
 				282AD29D27E9D6C4000402F5 /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

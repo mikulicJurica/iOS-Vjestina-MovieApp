@@ -23,11 +23,19 @@ class MovieDetailsViewController: UIViewController {
     private var movieLength: UILabel!
     private var favouritesButtonView: UIView!
     private var favouritesButton: UIButton!
+    private var percentageView: UIView!
+    private var percentageLabel: UILabel!
+    private var percentageSign: UILabel!
     
     //overview section
     private var overviewSectionView: UIView!
     private var overviewLabel: UILabel!
     private var overviewDescriptionLabel: UILabel!
+    
+    //overview people section
+    private var overviewPeopleView: UIView!
+    private var upperStackView: UIStackView!
+    private var lowerStackView: UIStackView!
     
     //app bottom bar variables
     private var appBottomBarView: UIView!
@@ -95,12 +103,15 @@ class MovieDetailsViewController: UIViewController {
         
         scrollView.bounces = false
         
+        
+        //provjera scroll-a
         exampleLabel = UILabel()
-        exampleLabel.text = "START After being held captive in an Afghan cave, billionaire engineer Tony Stark creates a unique weaponized suit of armor to fight evil.After being held captivAfter being held captive in an Afghan cave, billionaire engineer Tony Stark creates a unique weaponized suit of armor to fight evil.After being held captivAfter being held captive in an Afghan cave, billionaire engineer Tony Stark creates a unique weaponized suit of armor to fight evil.After being held captivAfter being held captive in an Afghan cave, billionaire engineer Tony Stark creates a unique weaponized suit of armor to fight evil.After being held captivAfter being held captive in an Afghan cave, billionaire engineer Tony Stark creates a unique weaponized suit of armor to fight evil.After being held captivAfter being held captive in an Afghan cave, billionaire engineer Tony Stark creates a unique weaponized suit of armor to fight evil.After being held captivAfter being held captive in an Afghan cave, billionaire engineer Tony Stark creates a unique weaponized suit of armor to fight evil.After being held captivAfter being held captive in an Afghan cave, billionaire engineer Tony Stark creates a unique weaponized suit of armor to fight evil.After being held captivAfter being held captive in an Afghan cave, billionaire engineer Tony Stark creates a unique weaponized suit of armor to fight evil.After being held captivAfter being held captive in an Afghan cave, billionaire engineer Tony Stark creates a unique weaponized suit of armor to fight evil.After being held captivAfter being held captive in an Afghan cave, billionaire engineer Tony Stark creates a unique weaponized suit of armor to fight evil.After being held captivvAfter being held captive in an Afghan cave, billionaire engineer Tony Stark creates a unique weaponized suit of armor to fight evil.After being held captiv END"
+        exampleLabel.text = "START---------------------------------------PROVJERA SCROLLA-------------------------------------------END"
         exampleLabel.numberOfLines = 0
         
         contentView.addSubview(movieDetailsTop())
         contentView.addSubview(overviewSection())
+        contentView.addSubview(peopleSection())
         contentView.addSubview(exampleLabel)
     }
     
@@ -168,6 +179,44 @@ class MovieDetailsViewController: UIViewController {
         favouritesButton.tintColor = UIColor.white
         favouritesButtonView.addSubview(favouritesButton)
         
+        
+        //percentage view
+        percentageView = UIView()
+        
+        let angle = -(.pi/2)+(76.0/100.0)*(.pi*2)
+            
+        let path1 = UIBezierPath(arcCenter: percentageView.center, radius: 19.5, startAngle: angle, endAngle: -.pi/2, clockwise: true)
+        let path2 = UIBezierPath(arcCenter: percentageView.center, radius: 19.5, startAngle: -.pi/2, endAngle: angle, clockwise: true)
+        
+        let shapeLayer1 = CAShapeLayer()
+        shapeLayer1.path = path1.cgPath
+        shapeLayer1.fillColor = UIColor.clear.cgColor
+        shapeLayer1.lineWidth = 3
+        shapeLayer1.strokeColor = UIColor(red: 32.0/255.0, green: 69.0/255.0, blue: 41.0/255.0, alpha: 1.0).cgColor
+        
+        let shapeLayer2 = CAShapeLayer()
+        shapeLayer2.path = path2.cgPath
+        shapeLayer2.fillColor = UIColor.clear.cgColor
+        shapeLayer2.lineWidth = 3
+        shapeLayer2.strokeColor = UIColor(red: 33.0/255.0, green: 208.0/255.0, blue: 122.0/255.0, alpha: 1.0).cgColor
+        
+        percentageView.layer.addSublayer(shapeLayer1)
+        percentageView.layer.addSublayer(shapeLayer2)
+        
+        percentageLabel = UILabel()
+        percentageLabel.textColor = UIColor.white
+        percentageLabel.font = UIFont(name: "Verdana", size: 15)
+        percentageLabel.text = "76"//String(percentage)
+        percentageView.addSubview(percentageLabel)
+        
+        percentageSign = UILabel()
+        percentageSign.textColor = UIColor.white
+        percentageSign.font = UIFont(name: "Verdana", size: 9)
+        percentageSign.text = "%"
+        percentageView.addSubview(percentageSign)
+        
+        movieDetailsTopView.addSubview(percentageView)
+        
         return movieDetailsTopView
     }
     
@@ -189,6 +238,35 @@ class MovieDetailsViewController: UIViewController {
         overviewSectionView.addSubview(overviewDescriptionLabel)
         
         return overviewSectionView
+    }
+    
+    private func peopleSection() -> UIView {
+        overviewPeopleView = UIView()
+        
+        upperStackView = UIStackView()
+        upperStackView.axis = .horizontal
+        upperStackView.alignment = .fill
+        upperStackView.distribution = .fillEqually
+        upperStackView.spacing = 5
+        
+        lowerStackView = UIStackView()
+        lowerStackView.axis = .horizontal
+        lowerStackView.alignment = .fill
+        lowerStackView.distribution = .fillEqually
+        lowerStackView.spacing = 5
+        
+        overviewPeopleView.addSubview(upperStackView)
+        overviewPeopleView.addSubview(lowerStackView)
+
+        upperStackView.addArrangedSubview(makePersonView(personName: "Don Heck", personJob: "Characters"))
+        upperStackView.addArrangedSubview(makePersonView(personName: "Jack Kirby", personJob: "Characters"))
+        upperStackView.addArrangedSubview(makePersonView(personName: "Jon Favreau", personJob: "Director"))
+
+        lowerStackView.addArrangedSubview(makePersonView(personName: "Don Heck", personJob: "Screenplay"))
+        lowerStackView.addArrangedSubview(makePersonView(personName: "Jack Marcum", personJob: "Screenplay"))
+        lowerStackView.addArrangedSubview(makePersonView(personName: "Matt Holloway", personJob: "Screenplay"))
+        
+        return overviewPeopleView
     }
     
     private func bottomBar() {
@@ -288,9 +366,10 @@ class MovieDetailsViewController: UIViewController {
         
         movieDetailsTopConstraints()
         overviewSectionConstraints()
+        peopleSectionConstraint()
         
         exampleLabel.snp.makeConstraints({
-            $0.top.equalTo(overviewSectionView.snp.bottom).inset(-10)
+            $0.top.equalTo(overviewPeopleView.snp.bottom).inset(-400)
             $0.bottom.leading.trailing.equalToSuperview()
         })
     }
@@ -338,6 +417,22 @@ class MovieDetailsViewController: UIViewController {
             $0.width.equalTo(15)
             $0.height.equalTo(15)
         })
+        
+        percentageView.snp.makeConstraints({
+            $0.leading.equalToSuperview().inset(21+21)
+            $0.top.equalToSuperview().inset(108+21)
+            $0.width.height.equalTo(21)
+        })
+        
+        percentageLabel.snp.makeConstraints({
+            $0.leading.equalToSuperview().inset(-13)
+            $0.top.equalToSuperview().inset(-10)
+        })
+        
+        percentageSign.snp.makeConstraints({
+            $0.leading.equalTo(percentageLabel.snp.trailing)
+            $0.bottom.equalTo(percentageLabel).offset(-1.5)
+        })
     }
     
     private func overviewSectionConstraints() {
@@ -356,6 +451,25 @@ class MovieDetailsViewController: UIViewController {
             $0.leading.equalTo(overviewSectionView).inset(16)
             $0.trailing.equalTo(overviewSectionView).inset(27)
             $0.top.equalTo(overviewLabel.snp.bottom).offset(8)
+        })
+    }
+    
+    private func peopleSectionConstraint() {
+        overviewPeopleView.snp.makeConstraints({
+            $0.leading.trailing.equalToSuperview().inset(16)
+            $0.top.equalTo(overviewSectionView.snp.bottom)
+            $0.height.equalTo(128)
+        })
+
+        upperStackView.snp.makeConstraints({
+            $0.leading.trailing.equalToSuperview()
+            $0.top.equalToSuperview().inset(22)
+            $0.bottom.equalToSuperview().inset(128/2)
+        })
+
+        lowerStackView.snp.makeConstraints({
+            $0.leading.trailing.bottom.equalToSuperview()
+            $0.top.equalTo(upperStackView.snp.bottom).offset(26)
         })
     }
     
@@ -416,9 +530,33 @@ class MovieDetailsViewController: UIViewController {
         })
     }
     
-    
-    
-    
+    private func makePersonView(personName: String, personJob: String) -> UIView {
+        let personView = UIView()
+        
+        let personNameLabel = UILabel()
+        personNameLabel.textColor = .black
+        personNameLabel.font = UIFont(name: "Verdana-Bold", size: 14)
+        personNameLabel.text = personName
+        personView.addSubview(personNameLabel)
+
+        let personJobLabel = UILabel()
+        personJobLabel.textColor = .black
+        personJobLabel.font = UIFont(name: "Verdana", size: 14)
+        personJobLabel.text = personJob
+        personView.addSubview(personJobLabel)
+        
+        personNameLabel.snp.makeConstraints({
+            $0.leading.equalToSuperview()
+            $0.centerY.equalToSuperview().offset(-19.6/2)
+        })
+        
+        personJobLabel.snp.makeConstraints({
+            $0.leading.equalTo(personNameLabel.snp.leading)
+            $0.centerY.equalToSuperview().offset(19.6/2)
+        })
+        
+        return personView
+    }
     
     
     
