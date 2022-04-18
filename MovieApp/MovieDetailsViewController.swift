@@ -3,11 +3,6 @@ import SnapKit
 
 class MovieDetailsViewController: UIViewController {
     
-    //top bar variables
-    private var topBarView: UIView!
-    private var imageTitleView: UIImageView!
-    private var backButtonTop: UIButton!
-    
     //scroll view variables
     private var scrollView: UIScrollView!
     private var contentView: UIView!
@@ -15,13 +10,14 @@ class MovieDetailsViewController: UIViewController {
     
     //movie details top view section
     private var movieDetailsTopView: UIView!
+    private var imageMovieView: UIImageView!
+    private var imageGradientView: UIImageView!
     private var userScoreLabel: UILabel!
     private var userScore: UILabel!
     private var movieTitle: UILabel!
     private var movieDate: UILabel!
     private var movieDescription: UILabel!
     private var movieLength: UILabel!
-    private var favouritesButtonView: UIView!
     private var favouritesButton: UIButton!
     private var percentageView: UIView!
     private var percentageLabel: UILabel!
@@ -46,52 +42,35 @@ class MovieDetailsViewController: UIViewController {
     private var favoritesButton: UIButton!
     private var favoritesButtonTitle: UILabel!
     
-    //bottom bar variables
-    private var bottomBarStackView: UIStackView!
-    private var recentsButton: UIButton!
-    private var HOMEButton: UIButton!
-    private var backButton: UIButton!
+    //style
+    private let movieDetailsTopViewHeight: Float = 400.0
+    private let baseLength: Float = 18.0
+    private let favouritesButtonSize: Float = 32.0
+    private let percentageViewSize: Float = 21.0
+    private let textElementSpaceSize: Float = 15.0
+    
+    //movie model
+    ///////////////////////////private var movieModel: MovieModel!
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        /////////////////////movieModel = MovieModel()
         
         buildViews()
         addConstraints()
     }
 
     private func buildViews() {
-        view.backgroundColor = UIColor.white
+        view.backgroundColor = .white
         
-        topBar()
         scrollViewFunc()
-        bottomBar()
         appBottomBar()
     }
     
     private func addConstraints() {
-        topBarConstraints()
         scrollViewConstraints()
-        bottomBarConstraints()
         appBottomBarConstraints()
-    }
-    
-    private func topBar() {
-        
-        topBarView = UIView()
-        topBarView.backgroundColor = UIColor(red: 11.0/255.0, green: 37.0/255.0, blue: 63.0/255.0, alpha: 1.0)
-        view.addSubview(topBarView)
-        
-        
-        imageTitleView = UIImageView(image: UIImage(named: "topTitle.pdf"))
-        imageTitleView.contentMode = UIView.ContentMode.scaleAspectFill
-        imageTitleView.clipsToBounds = true
-        topBarView.addSubview(imageTitleView)
-        
-        
-        backButtonTop = UIButton()
-        backButtonTop.setBackgroundImage(UIImage(named: "back.pdf"), for: .normal)
-        backButtonTop.addTarget(self, action: #selector(backButtonTopPressed), for: .touchUpInside)
-        topBarView.addSubview(backButtonTop)
     }
     
     private func scrollViewFunc() {
@@ -107,7 +86,7 @@ class MovieDetailsViewController: UIViewController {
         //provjera scroll-a
         exampleLabel = UILabel()
         exampleLabel.text = "START---------------------------------------PROVJERA SCROLLA-------------------------------------------END"
-        exampleLabel.numberOfLines = 0
+        //exampleLabel.numberOfLines = 0
         
         contentView.addSubview(movieDetailsTop())
         contentView.addSubview(overviewSection())
@@ -119,24 +98,14 @@ class MovieDetailsViewController: UIViewController {
         
         movieDetailsTopView = UIView()
         
-        let image = UIImage(named: "iron_man.jpg")
-        let imageView = UIImageView(image: image)
-        imageView.frame = CGRect(x: 0, y: 0, width: view.bounds.width, height: 303)
-        imageView.contentMode = .top
-        imageView.clipsToBounds = true
-
-        imageView.image = image!.resizeTopAlignedToFill(newWidth: imageView.frame.width)
+        imageMovieView = UIImageView(image: UIImage(named: "iron_man"))
+        imageMovieView.contentMode = UIView.ContentMode.scaleAspectFill
+        imageMovieView.clipsToBounds = true
+        movieDetailsTopView.addSubview(imageMovieView)
         
-        movieDetailsTopView.addSubview(imageView)
-        
-        let imageGradient = UIImage(named: "gradient.pdf")
-        let imageGradientView = UIImageView(image: imageGradient)
-        imageGradientView.frame = CGRect(x: 0, y: 0, width: view.bounds.width, height: 303)
-        imageGradientView.contentMode = .top
+        imageGradientView = UIImageView(image: UIImage(named: "gradient"))
+        imageGradientView.contentMode = UIView.ContentMode.scaleAspectFill
         imageGradientView.clipsToBounds = true
-
-        imageGradientView.image = imageGradient!.resizeTopAlignedToFill(newWidth: imageGradientView.frame.width)
-        
         movieDetailsTopView.addSubview(imageGradientView)
 
         userScoreLabel = UILabel()
@@ -148,6 +117,7 @@ class MovieDetailsViewController: UIViewController {
         movieTitle = UILabel()
         movieTitle.textColor = UIColor.white
         movieTitle.font = UIFont(name: "Verdana-Bold", size: 24)
+        //movieTitle.text = movieModel.movieName
         movieTitle.text = "Iron man (2008)"
         movieDetailsTopView.addSubview(movieTitle)
         
@@ -169,15 +139,13 @@ class MovieDetailsViewController: UIViewController {
         movieLength.text = "2h 6m"
         movieDetailsTopView.addSubview(movieLength)
         
-        favouritesButtonView = UIView()
-        favouritesButtonView.backgroundColor = UIColor(red: 117.0/255.0, green: 117.0/255.0, blue: 117.0/255.0, alpha: 1.0)
-        favouritesButtonView.layer.cornerRadius = 32.0/2.0
-        movieDetailsTopView.addSubview(favouritesButtonView)
-        
         favouritesButton = UIButton()
-        favouritesButton.setImage(UIImage(systemName: "star"), for: .normal)
+        favouritesButton.setImage(UIImage(systemName: "star", withConfiguration: UIImage.SymbolConfiguration(scale: .small)), for: .normal)
+        favouritesButton.backgroundColor = styleConstants.appColors.appBlack
+        favouritesButton.addTarget(self, action: #selector(favouritesButtonTap), for: .touchUpInside)
+        favouritesButton.layer.cornerRadius = CGFloat(favouritesButtonSize/2.0)
         favouritesButton.tintColor = UIColor.white
-        favouritesButtonView.addSubview(favouritesButton)
+        movieDetailsTopView.addSubview(favouritesButton)
         
         
         //percentage view
@@ -192,13 +160,13 @@ class MovieDetailsViewController: UIViewController {
         shapeLayer1.path = path1.cgPath
         shapeLayer1.fillColor = UIColor.clear.cgColor
         shapeLayer1.lineWidth = 3
-        shapeLayer1.strokeColor = UIColor(red: 32.0/255.0, green: 69.0/255.0, blue: 41.0/255.0, alpha: 1.0).cgColor
+        shapeLayer1.strokeColor = styleConstants.appColors.darkGreen.cgColor
         
         let shapeLayer2 = CAShapeLayer()
         shapeLayer2.path = path2.cgPath
         shapeLayer2.fillColor = UIColor.clear.cgColor
         shapeLayer2.lineWidth = 3
-        shapeLayer2.strokeColor = UIColor(red: 33.0/255.0, green: 208.0/255.0, blue: 122.0/255.0, alpha: 1.0).cgColor
+        shapeLayer2.strokeColor = styleConstants.appColors.lightGreen.cgColor
         
         percentageView.layer.addSublayer(shapeLayer1)
         percentageView.layer.addSublayer(shapeLayer2)
@@ -206,7 +174,7 @@ class MovieDetailsViewController: UIViewController {
         percentageLabel = UILabel()
         percentageLabel.textColor = UIColor.white
         percentageLabel.font = UIFont(name: "Verdana", size: 15)
-        percentageLabel.text = "76"//String(percentage)
+        percentageLabel.text = "76" //String(percentage)
         percentageView.addSubview(percentageLabel)
         
         percentageSign = UILabel()
@@ -224,14 +192,14 @@ class MovieDetailsViewController: UIViewController {
         overviewSectionView = UIView()
         
         overviewLabel = UILabel()
-        overviewLabel.textColor = UIColor(red: 11.0/255.0, green: 37.0/255.0, blue: 63.0/255.0, alpha: 1.0)
-        overviewLabel.font = UIFont(name: "Verdana-Bold", size: 20)
+        overviewLabel.textColor = styleConstants.appColors.darkGray
+        overviewLabel.font = UIFont(name: "FONTSPRINGDEMO-ProximaNovaExtraboldRegular", size: 20)
         overviewLabel.text = "Overview"
         overviewSectionView.addSubview(overviewLabel)
         
         overviewDescriptionLabel = UILabel()
         overviewDescriptionLabel.textColor = UIColor.black
-        overviewDescriptionLabel.font = UIFont(name: "Verdana", size: 14)
+        overviewDescriptionLabel.font = UIFont(name: "FONTSPRINGDEMO-ProximaNovaRegular", size: 14)
         overviewDescriptionLabel.text = "After being held captive in an Afghan cave, billionaire engineer Tony Stark creates a unique weaponized suit of armor to fight evil."
         overviewDescriptionLabel.numberOfLines = 0
         
@@ -257,46 +225,34 @@ class MovieDetailsViewController: UIViewController {
         
         overviewPeopleView.addSubview(upperStackView)
         overviewPeopleView.addSubview(lowerStackView)
+        
+//        for i in 1...2 {
+//            for i in 1...3 {
+//                let person = personView(personName: "Don Heck", personJob: "Characters")
+//              // statements
+//            }
+//        }
+        
+        var person = personView(personName: "Don Heck", personJob: "Characters")
+        upperStackView.addArrangedSubview(person.makePersonView())
+        
+        person = personView(personName: "Jack Kirby", personJob: "Characters")
+        upperStackView.addArrangedSubview(person.makePersonView())
+        
+        person = personView(personName: "Jon Favreau", personJob: "Director")
+        upperStackView.addArrangedSubview(person.makePersonView())
 
-        upperStackView.addArrangedSubview(makePersonView(personName: "Don Heck", personJob: "Characters"))
-        upperStackView.addArrangedSubview(makePersonView(personName: "Jack Kirby", personJob: "Characters"))
-        upperStackView.addArrangedSubview(makePersonView(personName: "Jon Favreau", personJob: "Director"))
-
-        lowerStackView.addArrangedSubview(makePersonView(personName: "Don Heck", personJob: "Screenplay"))
-        lowerStackView.addArrangedSubview(makePersonView(personName: "Jack Marcum", personJob: "Screenplay"))
-        lowerStackView.addArrangedSubview(makePersonView(personName: "Matt Holloway", personJob: "Screenplay"))
+        
+        person = personView(personName: "Don Heck", personJob: "Screenplay")
+        lowerStackView.addArrangedSubview(person.makePersonView())
+        
+        person = personView(personName: "Jack Marcum", personJob: "Screenplay")
+        lowerStackView.addArrangedSubview(person.makePersonView())
+        
+        person = personView(personName: "Matt Holloway", personJob: "Screenplay")
+        lowerStackView.addArrangedSubview(person.makePersonView())
         
         return overviewPeopleView
-    }
-    
-    private func bottomBar() {
-        
-        bottomBarStackView = UIStackView()
-        bottomBarStackView.axis = .horizontal
-        bottomBarStackView.alignment = .fill
-        bottomBarStackView.distribution = .fillEqually
-        bottomBarStackView.spacing = 0
-        
-        view.addSubview(bottomBarStackView)
-        
-        let recentsButtonView = UIView()
-        recentsButton = UIButton()
-        recentsButton.setBackgroundImage(UIImage(named: "recents.pdf"), for: .normal)
-        recentsButtonView.addSubview(recentsButton)
-        
-        let HOMEButtonView = UIView()
-        HOMEButton = UIButton()
-        HOMEButton.setBackgroundImage(UIImage(named: "home.pdf"), for: .normal)
-        HOMEButtonView.addSubview(HOMEButton)
-        
-        let backButtonView = UIView()
-        backButton = UIButton()
-        backButton.setBackgroundImage(UIImage(named: "back_bottom.pdf"), for: .normal)
-        backButtonView.addSubview(backButton)
-        
-        bottomBarStackView.addArrangedSubview(recentsButtonView)
-        bottomBarStackView.addArrangedSubview(HOMEButtonView)
-        bottomBarStackView.addArrangedSubview(backButtonView)
     }
     
     private func appBottomBar() {
@@ -312,7 +268,7 @@ class MovieDetailsViewController: UIViewController {
         homeButtonView.addSubview(homeButton)
         
         homeButtonTitle = UILabel()
-        homeButtonTitle.textColor = UIColor(red: 11.0/255.0, green: 37.0/255.0, blue: 63.0/255.0, alpha: 1.0)
+        homeButtonTitle.textColor = styleConstants.appColors.darkGray
         homeButtonTitle.font = UIFont(name: "Verdana-Bold", size: 10)
         homeButtonTitle.text = "Home"
         homeButtonView.addSubview(homeButtonTitle)
@@ -324,7 +280,7 @@ class MovieDetailsViewController: UIViewController {
         favoritesButtonView.addSubview(favoritesButton)
         
         favoritesButtonTitle = UILabel()
-        favoritesButtonTitle.textColor = UIColor(red: 11.0/255.0, green: 37.0/255.0, blue: 63.0/255.0, alpha: 1.0)
+        favoritesButtonTitle.textColor = styleConstants.appColors.darkGray
         favoritesButtonTitle.font = UIFont(name: "Verdana", size: 10)
         favoritesButtonTitle.text = "Favorites"
         favoritesButtonView.addSubview(favoritesButtonTitle)
@@ -333,41 +289,23 @@ class MovieDetailsViewController: UIViewController {
         appBottomBarView.addSubview(homeButtonView)
     }
     
-    private func topBarConstraints() {
-        
-        topBarView.snp.makeConstraints({
-            $0.top.equalToSuperview()
-            $0.trailing.leading.equalToSuperview()
-            $0.height.equalTo(80)
-        })
-        
-        imageTitleView.snp.makeConstraints({
-            $0.centerX.equalTo(topBarView)
-            $0.bottom.equalTo(topBarView).inset(6)
-        })
-        
-        backButtonTop.snp.makeConstraints({
-            $0.leading.equalTo(topBarView).inset(16)
-            $0.bottom.equalTo(topBarView).inset(18.1)
-        })
-    }
-    
     private func scrollViewConstraints() {
         scrollView.snp.makeConstraints({
-            $0.top.equalTo(topBarView.snp.bottom)
-            $0.leading.trailing.equalTo(view.safeAreaLayoutGuide)
+            $0.top.leading.trailing.equalTo(view.safeAreaLayoutGuide)
             $0.bottom.equalTo(appBottomBarView.snp.top)
         })
         
         contentView.snp.makeConstraints({
             $0.edges.equalToSuperview()
-            $0.width.equalTo(view)
+            $0.width.equalToSuperview()
         })
         
         movieDetailsTopConstraints()
         overviewSectionConstraints()
         peopleSectionConstraint()
         
+        
+        // samo za probu
         exampleLabel.snp.makeConstraints({
             $0.top.equalTo(overviewPeopleView.snp.bottom).inset(-400)
             $0.bottom.leading.trailing.equalToSuperview()
@@ -378,60 +316,63 @@ class MovieDetailsViewController: UIViewController {
         
         movieDetailsTopView.snp.makeConstraints({
             $0.top.leading.trailing.equalToSuperview()
-            $0.height.equalTo(303)
+            $0.height.equalTo(movieDetailsTopViewHeight)
         })
         
-        userScoreLabel.snp.makeConstraints({
-            $0.leading.equalToSuperview().inset(71)
-            $0.top.equalToSuperview().inset(122)
+        imageMovieView.snp.makeConstraints({
+            $0.edges.equalToSuperview()
         })
         
-        movieTitle.snp.makeConstraints({
-            $0.leading.equalToSuperview().inset(18)
-            $0.top.equalToSuperview().inset(159)
-        })
-        
-        movieDate.snp.makeConstraints({
-            $0.leading.equalToSuperview().inset(18)
-            $0.top.equalToSuperview().inset(196)
-        })
-        
-        movieDescription.snp.makeConstraints({
-            $0.leading.equalToSuperview().inset(18)
-            $0.bottom.equalToSuperview().inset(67)
-        })
-        
-        movieLength.snp.makeConstraints({
-            $0.leading.equalTo(movieDescription.snp.trailing).offset(14)
-            $0.bottom.equalToSuperview().inset(67)
-        })
-        
-        favouritesButtonView.snp.makeConstraints({
-            $0.width.height.equalTo(32)
-            $0.leading.equalToSuperview().inset(18)
-            $0.bottom.equalToSuperview().inset(20)
+        imageGradientView.snp.makeConstraints({
+            $0.edges.equalToSuperview()
         })
         
         favouritesButton.snp.makeConstraints({
-            $0.center.equalToSuperview()
-            $0.width.equalTo(15)
-            $0.height.equalTo(15)
+            $0.width.height.equalTo(favouritesButtonSize)
+            $0.leading.bottom.equalToSuperview().inset(baseLength)
+        })
+        
+        movieLength.snp.makeConstraints({
+            $0.trailing.equalToSuperview().inset(60)
+            $0.bottom.equalTo(favouritesButton.snp.top).offset(-textElementSpaceSize)
+        })
+        
+        movieDescription.snp.makeConstraints({
+            $0.leading.equalToSuperview().inset(baseLength)
+            $0.trailing.equalTo(movieLength.snp.leading).offset(-textElementSpaceSize/2)
+            $0.bottom.equalTo(favouritesButton.snp.top).offset(-textElementSpaceSize)
+        })
+        
+        movieDate.snp.makeConstraints({
+            $0.leading.trailing.equalToSuperview().inset(baseLength)
+            $0.bottom.equalTo(movieDescription.snp.top).offset(-textElementSpaceSize/5)
+        })
+
+        movieTitle.snp.makeConstraints({
+            $0.leading.trailing.equalToSuperview().inset(baseLength)
+            $0.bottom.equalTo(movieDate.snp.top).offset(-textElementSpaceSize/2)
         })
         
         percentageView.snp.makeConstraints({
-            $0.leading.equalToSuperview().inset(21+21)
-            $0.top.equalToSuperview().inset(108+21)
-            $0.width.height.equalTo(21)
+            $0.leading.equalToSuperview().inset(baseLength+percentageViewSize)
+            $0.bottom.equalTo(movieTitle.snp.top).offset(-textElementSpaceSize)
+            $0.width.height.equalTo(percentageViewSize)
         })
         
         percentageLabel.snp.makeConstraints({
-            $0.leading.equalToSuperview().inset(-13)
-            $0.top.equalToSuperview().inset(-10)
+            $0.centerX.equalTo(percentageView.snp.leading).offset(-percentageViewSize/4)
+            $0.centerY.equalToSuperview().offset(-percentageViewSize/2)
         })
         
         percentageSign.snp.makeConstraints({
             $0.leading.equalTo(percentageLabel.snp.trailing)
-            $0.bottom.equalTo(percentageLabel).offset(-1.5)
+            $0.bottom.equalTo(percentageLabel.snp.bottom).offset(-percentageViewSize/15)
+        })
+        
+        userScoreLabel.snp.makeConstraints({
+            $0.leading.equalTo(percentageView.snp.trailing).offset(8)
+            $0.trailing.equalToSuperview()
+            $0.centerY.equalTo(percentageLabel.snp.centerY)
         })
     }
     
@@ -443,59 +384,35 @@ class MovieDetailsViewController: UIViewController {
         })
         
         overviewLabel.snp.makeConstraints({
-            $0.leading.equalTo(overviewSectionView).inset(18)
-            $0.top.equalTo(overviewSectionView).inset(20)
+            $0.top.leading.trailing.equalToSuperview().inset(baseLength)
         })
 
         overviewDescriptionLabel.snp.makeConstraints({
-            $0.leading.equalTo(overviewSectionView).inset(16)
-            $0.trailing.equalTo(overviewSectionView).inset(27)
-            $0.top.equalTo(overviewLabel.snp.bottom).offset(8)
+            $0.leading.trailing.equalToSuperview().inset(baseLength)
+            $0.top.equalTo(overviewLabel.snp.bottom).offset(9)
         })
     }
     
     private func peopleSectionConstraint() {
         overviewPeopleView.snp.makeConstraints({
-            $0.leading.trailing.equalToSuperview().inset(16)
-            $0.top.equalTo(overviewSectionView.snp.bottom)
-            $0.height.equalTo(128)
+            $0.leading.trailing.equalToSuperview().inset(baseLength)
+            $0.top.equalTo(overviewSectionView.snp.bottom).offset(baseLength)
         })
 
         upperStackView.snp.makeConstraints({
-            $0.leading.trailing.equalToSuperview()
-            $0.top.equalToSuperview().inset(22)
-            $0.bottom.equalToSuperview().inset(128/2)
+            $0.top.leading.trailing.equalToSuperview()
         })
 
         lowerStackView.snp.makeConstraints({
-            $0.leading.trailing.bottom.equalToSuperview()
+            $0.bottom.leading.trailing.equalToSuperview()
             $0.top.equalTo(upperStackView.snp.bottom).offset(26)
-        })
-    }
-    
-    private func bottomBarConstraints() {
-        bottomBarStackView.snp.makeConstraints({
-            $0.leading.trailing.bottom.equalToSuperview()
-            $0.height.equalTo(42)
-        })
-        
-        recentsButton.snp.makeConstraints({
-            $0.center.equalToSuperview()
-        })
-        
-        HOMEButton.snp.makeConstraints({
-            $0.center.equalToSuperview()
-        })
-        
-        backButton.snp.makeConstraints({
-            $0.center.equalToSuperview()
         })
     }
     
     private func appBottomBarConstraints() {
         appBottomBarView.snp.makeConstraints({
             $0.leading.trailing.equalToSuperview()
-            $0.bottom.equalTo(bottomBarStackView.snp.top)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
             $0.height.equalTo(56)
         })
         
@@ -530,53 +447,7 @@ class MovieDetailsViewController: UIViewController {
         })
     }
     
-    private func makePersonView(personName: String, personJob: String) -> UIView {
-        let personView = UIView()
-        
-        let personNameLabel = UILabel()
-        personNameLabel.textColor = .black
-        personNameLabel.font = UIFont(name: "Verdana-Bold", size: 14)
-        personNameLabel.text = personName
-        personView.addSubview(personNameLabel)
-
-        let personJobLabel = UILabel()
-        personJobLabel.textColor = .black
-        personJobLabel.font = UIFont(name: "Verdana", size: 14)
-        personJobLabel.text = personJob
-        personView.addSubview(personJobLabel)
-        
-        personNameLabel.snp.makeConstraints({
-            $0.leading.equalToSuperview()
-            $0.centerY.equalToSuperview().offset(-19.6/2)
-        })
-        
-        personJobLabel.snp.makeConstraints({
-            $0.leading.equalTo(personNameLabel.snp.leading)
-            $0.centerY.equalToSuperview().offset(19.6/2)
-        })
-        
-        return personView
-    }
-    
-    
-    
-    
-    @objc private func backButtonTopPressed() {
-        print("Idi natrag.")
-    }
-}
-
-extension UIImage {
-    func resizeTopAlignedToFill(newWidth: CGFloat) -> UIImage? {
-        let newHeight = size.height * newWidth / size.width
-
-        let newSize = CGSize(width: newWidth, height: newHeight)
-
-        UIGraphicsBeginImageContextWithOptions(newSize, false, UIScreen.main.scale)
-        draw(in: CGRect(origin: .zero, size: newSize))
-        let newImage = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-
-        return newImage
+    @objc private func favouritesButtonTap() {
+        print("TAP!")
     }
 }
