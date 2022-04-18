@@ -9,15 +9,9 @@
 /* Begin PBXBuildFile section */
 		281CA3142801857B008EE43F /* personView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 281CA3132801857B008EE43F /* personView.swift */; };
 		281CA31628018C0E008EE43F /* MovieModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 281CA31528018C0E008EE43F /* MovieModel.swift */; };
-		281CA31A2801C3FE008EE43F /* SearchTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 281CA3192801C3FE008EE43F /* SearchTableViewController.swift */; };
 		281CA31C2801FBAD008EE43F /* styleConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 281CA31B2801FBAD008EE43F /* styleConstants.swift */; };
-		281CA31E2801FFCE008EE43F /* SearchTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 281CA31D2801FFCE008EE43F /* SearchTableViewCell.swift */; };
-		281CA3212802E002008EE43F /* MovieListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 281CA3202802E002008EE43F /* MovieListViewController.swift */; };
 		281CA325280419FF008EE43F /* MovieAppData in Frameworks */ = {isa = PBXBuildFile; productRef = 281CA324280419FF008EE43F /* MovieAppData */; };
-		281CA3292806B1B6008EE43F /* MainTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 281CA3282806B1B6008EE43F /* MainTableViewController.swift */; };
-		281CA32B2806B20B008EE43F /* MainTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 281CA32A2806B20B008EE43F /* MainTableViewCell.swift */; };
 		281CA32D280750B6008EE43F /* getMovies.swift in Sources */ = {isa = PBXBuildFile; fileRef = 281CA32C280750B5008EE43F /* getMovies.swift */; };
-		281CA331280822B0008EE43F /* CollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 281CA330280822B0008EE43F /* CollectionViewCell.swift */; };
 		282AD29B27E9D6C4000402F5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 282AD29A27E9D6C4000402F5 /* AppDelegate.swift */; };
 		282AD29D27E9D6C4000402F5 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 282AD29C27E9D6C4000402F5 /* SceneDelegate.swift */; };
 		282AD2A427E9D6CB000402F5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 282AD2A327E9D6CB000402F5 /* Assets.xcassets */; };
@@ -31,14 +25,8 @@
 /* Begin PBXFileReference section */
 		281CA3132801857B008EE43F /* personView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = personView.swift; sourceTree = "<group>"; };
 		281CA31528018C0E008EE43F /* MovieModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieModel.swift; sourceTree = "<group>"; };
-		281CA3192801C3FE008EE43F /* SearchTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchTableViewController.swift; sourceTree = "<group>"; };
 		281CA31B2801FBAD008EE43F /* styleConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = styleConstants.swift; sourceTree = "<group>"; };
-		281CA31D2801FFCE008EE43F /* SearchTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchTableViewCell.swift; sourceTree = "<group>"; };
-		281CA3202802E002008EE43F /* MovieListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieListViewController.swift; sourceTree = "<group>"; };
-		281CA3282806B1B6008EE43F /* MainTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTableViewController.swift; sourceTree = "<group>"; };
-		281CA32A2806B20B008EE43F /* MainTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTableViewCell.swift; sourceTree = "<group>"; };
 		281CA32C280750B5008EE43F /* getMovies.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = getMovies.swift; sourceTree = "<group>"; };
-		281CA330280822B0008EE43F /* CollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionViewCell.swift; sourceTree = "<group>"; };
 		282AD29727E9D6C4000402F5 /* MovieApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MovieApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		282AD29A27E9D6C4000402F5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		282AD29C27E9D6C4000402F5 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -71,19 +59,6 @@
 			path = Structures;
 			sourceTree = "<group>";
 		};
-		281CA3222803F022008EE43F /* MovieList */ = {
-			isa = PBXGroup;
-			children = (
-				281CA3202802E002008EE43F /* MovieListViewController.swift */,
-				281CA3192801C3FE008EE43F /* SearchTableViewController.swift */,
-				281CA31D2801FFCE008EE43F /* SearchTableViewCell.swift */,
-				281CA3282806B1B6008EE43F /* MainTableViewController.swift */,
-				281CA32A2806B20B008EE43F /* MainTableViewCell.swift */,
-				281CA330280822B0008EE43F /* CollectionViewCell.swift */,
-			);
-			path = MovieList;
-			sourceTree = "<group>";
-		};
 		282AD28E27E9D6C4000402F5 = {
 			isa = PBXGroup;
 			children = (
@@ -103,7 +78,6 @@
 		282AD29927E9D6C4000402F5 /* MovieApp */ = {
 			isa = PBXGroup;
 			children = (
-				281CA3222803F022008EE43F /* MovieList */,
 				281CA31228018542008EE43F /* Structures */,
 				282AD2BB27EB05C9000402F5 /* Fonts */,
 				282AD29A27E9D6C4000402F5 /* AppDelegate.swift */,
@@ -208,18 +182,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				281CA3292806B1B6008EE43F /* MainTableViewController.swift in Sources */,
 				282AD2AF27E9DB5B000402F5 /* MovieDetailsViewController.swift in Sources */,
 				281CA3142801857B008EE43F /* personView.swift in Sources */,
-				281CA31E2801FFCE008EE43F /* SearchTableViewCell.swift in Sources */,
 				281CA31628018C0E008EE43F /* MovieModel.swift in Sources */,
 				282AD29B27E9D6C4000402F5 /* AppDelegate.swift in Sources */,
 				281CA31C2801FBAD008EE43F /* styleConstants.swift in Sources */,
-				281CA3212802E002008EE43F /* MovieListViewController.swift in Sources */,
-				281CA31A2801C3FE008EE43F /* SearchTableViewController.swift in Sources */,
-				281CA331280822B0008EE43F /* CollectionViewCell.swift in Sources */,
 				281CA32D280750B6008EE43F /* getMovies.swift in Sources */,
-				281CA32B2806B20B008EE43F /* MainTableViewCell.swift in Sources */,
 				282AD29D27E9D6C4000402F5 /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
