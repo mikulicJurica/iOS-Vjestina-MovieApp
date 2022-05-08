@@ -1,6 +1,5 @@
 import UIKit
 import SnapKit
-import MovieAppData
 
 class MainTableViewController: UIViewController {
     
@@ -8,7 +7,7 @@ class MainTableViewController: UIViewController {
     
     private var mainTableViewCellName = "MovieTableViewCell"
     
-    private let groupEnums = MovieGroup.allCases
+    private var movieGroups = MovieGroups.allCases
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -20,7 +19,7 @@ class MainTableViewController: UIViewController {
     private func buildViews() {
         mainTableView = UITableView()
         mainTableView.register(MainTableViewCell.self, forCellReuseIdentifier: mainTableViewCellName)
-        mainTableView.rowHeight = styleConstants.mainTableViewCellLengths.movieCellHeight
+        mainTableView.rowHeight = StyleConstants.MainTableViewCellLengths.movieCellHeight
         mainTableView.separatorColor = .clear
         mainTableView.delegate = self
         mainTableView.dataSource = self
@@ -41,14 +40,14 @@ extension MainTableViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return MovieGroup.allCases.count //number of groups from my enum
+        return movieGroups.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: mainTableViewCellName) as! MainTableViewCell
         cell.contentView.isUserInteractionEnabled = false //not interactable
         cell.selectionStyle = .none
-        cell.set(inputGroup: groupEnums[indexPath.row])
+        cell.set(inputGroup: movieGroups[indexPath.row])
         return cell
     }
 }

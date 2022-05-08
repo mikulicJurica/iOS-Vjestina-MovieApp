@@ -25,7 +25,7 @@ class SearchTableViewCell: UITableViewCell {
     private func buildMovieCell() {
         shadowView = UIView()
         shadowView.backgroundColor = .white
-        shadowView.layer.cornerRadius = styleConstants.movieTableViewCellLengths.cellEdgeRadius
+        shadowView.layer.cornerRadius = StyleConstants.MovieTableViewCellLengths.cellEdgeRadius
         shadowView.layer.shadowColor = UIColor.darkGray.cgColor
         shadowView.layer.shadowOpacity = 0.2
         shadowView.layer.shadowRadius = 5
@@ -34,7 +34,7 @@ class SearchTableViewCell: UITableViewCell {
         
         cellView = UIView()
         cellView.backgroundColor = .white
-        cellView.layer.cornerRadius = styleConstants.movieTableViewCellLengths.cellEdgeRadius
+        cellView.layer.cornerRadius = StyleConstants.MovieTableViewCellLengths.cellEdgeRadius
         cellView.clipsToBounds = true
         addSubview(cellView)
         
@@ -49,7 +49,7 @@ class SearchTableViewCell: UITableViewCell {
         cellView.addSubview(movieNameLabel)
         
         movieDescriptionLabel = UILabel()
-        movieDescriptionLabel.textColor = styleConstants.appColors.textLightGray
+        movieDescriptionLabel.textColor = StyleConstants.AppColors.textLightGray
         movieDescriptionLabel.font = UIFont(name: "Verdana", size: 14)
         movieDescriptionLabel.numberOfLines = 0
         cellView.addSubview(movieDescriptionLabel)
@@ -57,31 +57,31 @@ class SearchTableViewCell: UITableViewCell {
     
     private func buildMovieCellConstraints() {
         shadowView.snp.makeConstraints({
-            $0.leading.trailing.equalToSuperview().inset(styleConstants.movieTableViewCellLengths.spaceLengthLarge)
-            $0.top.bottom.equalToSuperview().inset(styleConstants.movieTableViewCellLengths.spaceLengthSmall/2 + 2)
+            $0.leading.trailing.equalToSuperview().inset(StyleConstants.MovieTableViewCellLengths.spaceLengthLarge)
+            $0.top.bottom.equalToSuperview().inset(StyleConstants.MovieTableViewCellLengths.spaceLengthSmall/2 + 2)
         })
         
         cellView.snp.makeConstraints({
-            $0.leading.trailing.equalToSuperview().inset(styleConstants.movieTableViewCellLengths.spaceLengthLarge)
-            $0.top.bottom.equalToSuperview().inset(styleConstants.movieTableViewCellLengths.spaceLengthSmall/2 + 2)
+            $0.leading.trailing.equalToSuperview().inset(StyleConstants.MovieTableViewCellLengths.spaceLengthLarge)
+            $0.top.bottom.equalToSuperview().inset(StyleConstants.MovieTableViewCellLengths.spaceLengthSmall/2 + 2)
         })
         
         movieImageView.snp.makeConstraints({
             $0.leading.top.bottom.equalToSuperview()
-            $0.width.equalTo(styleConstants.movieTableViewCellLengths.movieImageWidth)
+            $0.width.equalTo(StyleConstants.MovieTableViewCellLengths.movieImageWidth)
         })
         
         movieNameLabel.snp.makeConstraints({
-            $0.leading.equalTo(movieImageView.snp.trailing).offset(styleConstants.movieTableViewCellLengths.spaceLengthMedium)
-            $0.top.equalToSuperview().inset(styleConstants.movieTableViewCellLengths.spaceLengthSmall)
+            $0.leading.equalTo(movieImageView.snp.trailing).offset(StyleConstants.MovieTableViewCellLengths.spaceLengthMedium)
+            $0.top.equalToSuperview().inset(StyleConstants.MovieTableViewCellLengths.spaceLengthSmall)
             $0.trailing.equalToSuperview()
         })
 
         movieDescriptionLabel.snp.makeConstraints({
-            $0.leading.equalTo(movieImageView.snp.trailing).offset(styleConstants.movieTableViewCellLengths.spaceLengthMedium)
-            $0.top.equalTo(movieNameLabel.snp.bottom).offset(styleConstants.movieTableViewCellLengths.spaceLengthMedium/3)
+            $0.leading.equalTo(movieImageView.snp.trailing).offset(StyleConstants.MovieTableViewCellLengths.spaceLengthMedium)
+            $0.top.equalTo(movieNameLabel.snp.bottom).offset(StyleConstants.MovieTableViewCellLengths.spaceLengthMedium/3)
             $0.trailing.equalToSuperview()
-            $0.bottom.equalToSuperview().inset(styleConstants.movieTableViewCellLengths.spaceLengthSmall)
+            $0.bottom.equalToSuperview().inset(StyleConstants.MovieTableViewCellLengths.spaceLengthSmall)
         })
     }
     

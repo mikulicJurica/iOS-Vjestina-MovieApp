@@ -1,10 +1,3 @@
-//
-//  SceneDelegate.swift
-//  MovieApp
-//
-//  Created by Jurica Mikulic on 22.03.2022..
-//
-
 import UIKit
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
@@ -15,9 +8,22 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         
         window = UIWindow(windowScene: windowScene)
-        //window!.rootViewController = MovieDetailsViewController()
-        window!.rootViewController = MovieListViewController()
+        
+        let tabBarController = UITabBarController()
+        tabBarController.tabBar.tintColor = StyleConstants.AppColors.darkGray
+        
+        let movieListViewController = UINavigationController(rootViewController: MovieListViewController())
+        let favouritesViewController = UINavigationController(rootViewController: FavouritesViewController())
+        
+        movieListViewController.tabBarItem = UITabBarItem(title: "Home", image: UIImage(named: "home"), selectedImage: UIImage(named: "home_app_pressed"))
+        favouritesViewController.tabBarItem = UITabBarItem(title: "Favourites", image: UIImage(named: "favorites"), selectedImage: UIImage(named: "favorites_app_pressed"))
+        
+        tabBarController.tabBar.backgroundColor = .white
+        
+        tabBarController.viewControllers = [movieListViewController, favouritesViewController]
+        window?.rootViewController = tabBarController
         window?.makeKeyAndVisible()
+        
     }
 }
 

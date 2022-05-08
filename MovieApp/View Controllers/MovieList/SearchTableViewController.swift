@@ -9,6 +9,10 @@ class SearchTableViewController: UIViewController {
     private var movieSearchListTableView: UITableView!
     
     let searchTableViewCellName = "MovieTableViewCell"
+    
+    
+    private let movies = Movies.all()
+    
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -18,7 +22,6 @@ class SearchTableViewController: UIViewController {
     }
     
     func reloadListMovies() {
-        //updating list......
         
         movieSearchListTableView.reloadData()
     }
@@ -29,7 +32,7 @@ class SearchTableViewController: UIViewController {
         
         //setup table view
         movieSearchListTableView.register(SearchTableViewCell.self, forCellReuseIdentifier: searchTableViewCellName)
-        movieSearchListTableView.rowHeight = styleConstants.movieTableViewCellLengths.movieCellHeight
+        movieSearchListTableView.rowHeight = StyleConstants.MovieTableViewCellLengths.movieCellHeight
         movieSearchListTableView.separatorColor = .clear
         movieSearchListTableView.delegate = self
         movieSearchListTableView.dataSource = self
@@ -47,7 +50,7 @@ extension SearchTableViewController: UITableViewDataSource {
         return 1
     }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return getNumberOfAllMovies()
+        return movies.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -57,11 +60,9 @@ extension SearchTableViewController: UITableViewDataSource {
             fatalError()
         }
         
-        let nameInput = getAllMovieData()[indexPath.row].title
-        let descriptionInput = getAllMovieData()[indexPath.row].description
-        let imageURLInput = getAllMovieData()[indexPath.row].imageUrl
+        let movieTmp = movies[indexPath.row]
         
-        cell.set(movieName: nameInput, movieDescription: descriptionInput, movieImageUrl: imageURLInput)
+        cell.set(movieName: movieTmp.title, movieDescription: movieTmp.description, movieImageUrl: movieTmp.imageUrl)
         cell.selectionStyle = .none
         
         return cell

@@ -33,15 +33,6 @@ class MovieDetailsViewController: UIViewController {
     private var upperStackView: UIStackView!
     private var lowerStackView: UIStackView!
     
-    //app bottom bar variables
-    private var appBottomBarView: UIView!
-    private var homeButtonView: UIView!
-    private var homeButton: UIButton!
-    private var homeButtonTitle: UILabel!
-    private var favoritesButtonView: UIView!
-    private var favoritesButton: UIButton!
-    private var favoritesButtonTitle: UILabel!
-    
     //style
     private let movieDetailsTopViewHeight: Float = 400.0
     private let baseLength: Float = 18.0
@@ -49,13 +40,15 @@ class MovieDetailsViewController: UIViewController {
     private let percentageViewSize: Float = 21.0
     private let textElementSpaceSize: Float = 15.0
     
-    //movie model
-    ///////////////////////////private var movieModel: MovieModel!
-
+    private var movie: MovieModel!
+    
+    convenience init(movie: MovieModel) {
+        self.init()
+        self.movie = movie
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        /////////////////////movieModel = MovieModel()
         
         buildViews()
         addConstraints()
@@ -64,13 +57,21 @@ class MovieDetailsViewController: UIViewController {
     private func buildViews() {
         view.backgroundColor = .white
         
+        TopBottomNavigationView()
         scrollViewFunc()
-        appBottomBar()
     }
     
     private func addConstraints() {
         scrollViewConstraints()
-        appBottomBarConstraints()
+    }
+    
+    private func TopBottomNavigationView() {
+        navigationItem.titleView = UIImageView(image: UIImage(named: "topTitle"))
+        navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(named: "back"), style: .done, target: self, action: #selector(goBack))
+    }
+    
+    @objc private func goBack() {
+        self.navigationController?.popViewController(animated: true)
     }
     
     private func scrollViewFunc() {
@@ -95,10 +96,20 @@ class MovieDetailsViewController: UIViewController {
     }
     
     private func movieDetailsTop() -> UIView {
+        let yearStringArr = movie.releaseDate.components(separatedBy: "-")
+        let yearString = yearStringArr[0]
+        let monthString = yearStringArr[1]
+        let dayString = yearStringArr[2]
         
         movieDetailsTopView = UIView()
         
-        imageMovieView = UIImageView(image: UIImage(named: "iron_man"))
+        let imageUrl = "https://image.tmdb.org/t/p/original" + movie.posterPath
+        
+        let url = URL(string: imageUrl)
+        let data = try? Data(contentsOf: url!)
+        
+        imageMovieView = UIImageView(image: UIImage(data: data!))
+        
         imageMovieView.contentMode = UIView.ContentMode.scaleAspectFill
         imageMovieView.clipsToBounds = true
         movieDetailsTopView.addSubview(imageMovieView)
@@ -117,14 +128,13 @@ class MovieDetailsViewController: UIViewController {
         movieTitle = UILabel()
         movieTitle.textColor = UIColor.white
         movieTitle.font = UIFont(name: "Verdana-Bold", size: 24)
-        //movieTitle.text = movieModel.movieName
-        movieTitle.text = "Iron man (2008)"
+        movieTitle.text = "\(movie.title) (\(yearString))"
         movieDetailsTopView.addSubview(movieTitle)
         
         movieDate = UILabel()
         movieDate.textColor = UIColor.white
         movieDate.font = UIFont(name: "Verdana", size: 14)
-        movieDate.text = "05/02/2008 (US)"
+        movieDate.text = "\(dayString)/\(monthString)/\(yearString) (US)"
         movieDetailsTopView.addSubview(movieDate)
         
         movieDescription = UILabel()
@@ -136,12 +146,13 @@ class MovieDetailsViewController: UIViewController {
         movieLength = UILabel()
         movieLength.textColor = UIColor.white
         movieLength.font = UIFont(name: "Verdana-Bold", size: 14)
-        movieLength.text = "2h 6m"
+        let tmpTuple = minutesToHoursAndMinutes(100)
+        movieLength.text = "\(tmpTuple.hours)h \(tmpTuple.leftMinutes)m"
         movieDetailsTopView.addSubview(movieLength)
         
         favouritesButton = UIButton()
         favouritesButton.setImage(UIImage(systemName: "star", withConfiguration: UIImage.SymbolConfiguration(scale: .small)), for: .normal)
-        favouritesButton.backgroundColor = styleConstants.appColors.appBlack
+        favouritesButton.backgroundColor = StyleConstants.AppColors.appBlack
         favouritesButton.addTarget(self, action: #selector(favouritesButtonTap), for: .touchUpInside)
         favouritesButton.layer.cornerRadius = CGFloat(favouritesButtonSize/2.0)
         favouritesButton.tintColor = UIColor.white
@@ -150,8 +161,8 @@ class MovieDetailsViewController: UIViewController {
         
         //percentage view
         percentageView = UIView()
-        
-        let angle = -(.pi/2)+(76.0/100.0)*(.pi*2)
+        let userScore = movie.voteAverage * 10
+        let angle = -(.pi/2)+(userScore/100.0)*(.pi*2)
             
         let path1 = UIBezierPath(arcCenter: percentageView.center, radius: 19.5, startAngle: angle, endAngle: -.pi/2, clockwise: true)
         let path2 = UIBezierPath(arcCenter: percentageView.center, radius: 19.5, startAngle: -.pi/2, endAngle: angle, clockwise: true)
@@ -160,13 +171,13 @@ class MovieDetailsViewController: UIViewController {
         shapeLayer1.path = path1.cgPath
         shapeLayer1.fillColor = UIColor.clear.cgColor
         shapeLayer1.lineWidth = 3
-        shapeLayer1.strokeColor = styleConstants.appColors.darkGreen.cgColor
+        shapeLayer1.strokeColor = StyleConstants.AppColors.darkGreen.cgColor
         
         let shapeLayer2 = CAShapeLayer()
         shapeLayer2.path = path2.cgPath
         shapeLayer2.fillColor = UIColor.clear.cgColor
         shapeLayer2.lineWidth = 3
-        shapeLayer2.strokeColor = styleConstants.appColors.lightGreen.cgColor
+        shapeLayer2.strokeColor = StyleConstants.AppColors.lightGreen.cgColor
         
         percentageView.layer.addSublayer(shapeLayer1)
         percentageView.layer.addSublayer(shapeLayer2)
@@ -174,7 +185,7 @@ class MovieDetailsViewController: UIViewController {
         percentageLabel = UILabel()
         percentageLabel.textColor = UIColor.white
         percentageLabel.font = UIFont(name: "Verdana", size: 15)
-        percentageLabel.text = "76" //String(percentage)
+        percentageLabel.text = String(Int(userScore))
         percentageView.addSubview(percentageLabel)
         
         percentageSign = UILabel()
@@ -192,7 +203,7 @@ class MovieDetailsViewController: UIViewController {
         overviewSectionView = UIView()
         
         overviewLabel = UILabel()
-        overviewLabel.textColor = styleConstants.appColors.darkGray
+        overviewLabel.textColor = StyleConstants.AppColors.darkGray
         overviewLabel.font = UIFont(name: "FONTSPRINGDEMO-ProximaNovaExtraboldRegular", size: 20)
         overviewLabel.text = "Overview"
         overviewSectionView.addSubview(overviewLabel)
@@ -200,7 +211,7 @@ class MovieDetailsViewController: UIViewController {
         overviewDescriptionLabel = UILabel()
         overviewDescriptionLabel.textColor = UIColor.black
         overviewDescriptionLabel.font = UIFont(name: "FONTSPRINGDEMO-ProximaNovaRegular", size: 14)
-        overviewDescriptionLabel.text = "After being held captive in an Afghan cave, billionaire engineer Tony Stark creates a unique weaponized suit of armor to fight evil."
+        overviewDescriptionLabel.text = movie.overview
         overviewDescriptionLabel.numberOfLines = 0
         
         overviewSectionView.addSubview(overviewDescriptionLabel)
@@ -255,44 +266,9 @@ class MovieDetailsViewController: UIViewController {
         return overviewPeopleView
     }
     
-    private func appBottomBar() {
-        
-        appBottomBarView = UIView()
-        
-        view.addSubview(appBottomBarView)
-        
-        homeButtonView = UIView()
-        
-        homeButton = UIButton()
-        homeButton.setBackgroundImage(UIImage(named: "home_app_pressed.pdf"), for: .normal)
-        homeButtonView.addSubview(homeButton)
-        
-        homeButtonTitle = UILabel()
-        homeButtonTitle.textColor = styleConstants.appColors.darkGray
-        homeButtonTitle.font = UIFont(name: "Verdana-Bold", size: 10)
-        homeButtonTitle.text = "Home"
-        homeButtonView.addSubview(homeButtonTitle)
-        
-        favoritesButtonView = UIView()
-        
-        favoritesButton = UIButton()
-        favoritesButton.setBackgroundImage(UIImage(named: "favorites.pdf"), for: .normal)
-        favoritesButtonView.addSubview(favoritesButton)
-        
-        favoritesButtonTitle = UILabel()
-        favoritesButtonTitle.textColor = styleConstants.appColors.darkGray
-        favoritesButtonTitle.font = UIFont(name: "Verdana", size: 10)
-        favoritesButtonTitle.text = "Favorites"
-        favoritesButtonView.addSubview(favoritesButtonTitle)
-
-        appBottomBarView.addSubview(favoritesButtonView)
-        appBottomBarView.addSubview(homeButtonView)
-    }
-    
     private func scrollViewConstraints() {
         scrollView.snp.makeConstraints({
-            $0.top.leading.trailing.equalTo(view.safeAreaLayoutGuide)
-            $0.bottom.equalTo(appBottomBarView.snp.top)
+            $0.top.bottom.leading.trailing.equalTo(view.safeAreaLayoutGuide)
         })
         
         contentView.snp.makeConstraints({
@@ -409,42 +385,8 @@ class MovieDetailsViewController: UIViewController {
         })
     }
     
-    private func appBottomBarConstraints() {
-        appBottomBarView.snp.makeConstraints({
-            $0.leading.trailing.equalToSuperview()
-            $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
-            $0.height.equalTo(56)
-        })
-        
-        homeButtonView.snp.makeConstraints({
-            $0.centerY.equalToSuperview()
-            $0.centerX.equalToSuperview().offset(-(94/2)-20)
-        })
-        
-        homeButton.snp.makeConstraints({
-            $0.centerX.equalToSuperview()
-            $0.centerY.equalToSuperview().offset((-8.56/2) - (16.57/2))
-        })
-        
-        homeButtonTitle.snp.makeConstraints({
-            $0.centerX.equalToSuperview()
-            $0.centerY.equalToSuperview().offset(8.56/2 + 5)
-        })
-        
-        favoritesButtonView.snp.makeConstraints({
-            $0.centerY.equalToSuperview()
-            $0.centerX.equalToSuperview().offset((94/2)+20)
-        })
-        
-        favoritesButton.snp.makeConstraints({
-            $0.centerX.equalToSuperview()
-            $0.centerY.equalToSuperview().offset((-9/2) - (14/2))
-        })
-        
-        favoritesButtonTitle.snp.makeConstraints({
-            $0.centerX.equalToSuperview()
-            $0.centerY.equalToSuperview().offset(9/2 + 5)
-        })
+    func minutesToHoursAndMinutes(_ minutes: Int) -> (hours: Int , leftMinutes: Int) {
+        return (minutes / 60, (minutes % 60))
     }
     
     @objc private func favouritesButtonTap() {
