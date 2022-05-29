@@ -6,12 +6,11 @@ enum MovieGroups: CaseIterable {
     case trending
     case topRated
     case recommendations
-    
-    enum CodingKeys: String, CodingKey {
-        case popular = "What's popular"
-        case trending = "Trending"
-        case topRated = "Top Rated"
-        case recommendations = "Recommendations"
-    }
 
+    enum CodingKeys: String, CodingKey {
+        case popular = "popular"
+        case trending = "trending"
+        case topRated = "top_rated"
+        case recommendations = "recommendations"
+    }
 }

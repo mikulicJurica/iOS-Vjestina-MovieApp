@@ -9,19 +9,33 @@ class MovieListViewController: UIViewController {
     private var searchBarTextField: UITextField!
     private var searchBarXButton: UIButton!
     private var searchBarCancelButton: UIButton!
+    private var searchingState: Bool!
+    private var typingState: Bool!
     
     //view controllers
-    private var mainViewController = MainTableViewController() //when we open this view controller
-    private var searchViewController = SearchTableViewController() //when we are searching for movies
+    private var mainTableViewController = MainTableViewController() //when we open this view controller
+    private var searchTableViewController: SearchTableViewController! //when we are searching for movies
+    
+    private var networkService = NetworkService()
+    
+    private var movieListModel = MovieListModel(results: [])
+    
+    private var moviesRepository = MoviesRepository()
     
     //network check
     private let networkMonitor = NetworkMonitor()
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        moviesRepository.getAllMoviesFromDatabase(completion: { movieList in
+        })
 
         buildViews()
         buildConstraints()
+        
+        searchingState = false
+        typingState = false
     }
     
     private func buildViews() {
@@ -70,7 +84,7 @@ class MovieListViewController: UIViewController {
         searchBarTextField.delegate = self
         searchBarView.addSubview(searchBarTextField)
         
-        addChildVC(mainViewController)
+        addChildVC(mainTableViewController)
     }
     
     private func buildSearchBarInFocus() {
@@ -146,20 +160,23 @@ class MovieListViewController: UIViewController {
     }
     
     private func buildSearchListConstraints() {
-        searchViewController.view.snp.makeConstraints({
+        searchTableViewController.view.snp.makeConstraints({
             $0.top.equalTo(searchBarView.snp.bottom).offset(StyleConstants.MovieListVCLengths.spaceUnderSearchBar-StyleConstants.MovieTableViewCellLengths.spaceLengthMedium)
             $0.leading.trailing.bottom.equalTo(view.safeAreaLayoutGuide)
         })
     }
     
     private func buildMainMovieListConstraints() {
-        mainViewController.view.snp.makeConstraints({
+        mainTableViewController.view.snp.makeConstraints({
             $0.top.equalTo(searchBarView.snp.bottom).offset(StyleConstants.MainTableViewCellLengths.spaceLengthMedium)
             $0.leading.trailing.bottom.equalTo(view.safeAreaLayoutGuide).inset(StyleConstants.MovieListVCLengths.spaceLength)
         })
     }
     
     @objc private func cancelSearch() {
+        searchingState = false
+        typingState = false
+        
         searchBarXButton.removeFromSuperview()
         searchBarCancelButton.removeFromSuperview()
         
@@ -174,11 +191,13 @@ class MovieListViewController: UIViewController {
         searchBarTextField.attributedPlaceholder = attributedSearchText
         searchBarTextField.resignFirstResponder()
         
-        removeChildVC(searchViewController)
+        if (searchTableViewController != nil) {
+            removeChildVC(searchTableViewController)
+        }
         
         cancelSearchConstraints()
         
-        addChildVC(mainViewController)
+        addChildVC(mainTableViewController)
         buildMainMovieListConstraints()
         
     }
@@ -203,28 +222,62 @@ class MovieListViewController: UIViewController {
 extension MovieListViewController: UITextFieldDelegate {
     
     func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
-        // return NO to disallow editing.
-        print("TextField should begin editing method called")
-        
-        buildSearchBarInFocus()
-        buildSearchBarInFocusConstraints()
-        
-        removeChildVC(mainViewController)
-        
-        return true
+        if (searchingState == false) {
+            buildSearchBarInFocus()
+            buildSearchBarInFocusConstraints()
+            
+            removeChildVC(mainTableViewController)
+            
+            if (searchTableViewController != nil) {
+                removeChildVC(searchTableViewController)
+            }
+            
+            searchingState = true
+            return true
+            
+        } else {
+            if (searchTableViewController != nil) {
+                removeChildVC(searchTableViewController)
+            }
+            return true
+        }
     }
     
     func textFieldDidBeginEditing(_ textField: UITextField) {
-        // became first responder
-        buildSearchBarTyping()
-        buildSearchBarTypingConstraints()
-        print("TextField did begin editing method called")
-
-        addChildVC(searchViewController)
-        buildSearchListConstraints()
+        if (typingState == false) {
+            buildSearchBarTyping()
+            buildSearchBarTypingConstraints()
+            
+//            if (searchTableViewController != nil) {
+//                print("removed searchtableview")
+//                removeChildVC(searchTableViewController)
+//            }
+            
+            typingState = true
+        }
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        searchBarTextField.endEditing(true)
+        return true
     }
     
     func textFieldDidEndEditing(_ textField: UITextField) {
+        if (searchingState == true) {
+            networkService.getMovieList(listName: "trending", completionHandler: { (result: Result<MovieListModel, RequestError>) in
+                switch result {
+                case .failure(let error):
+                    print(error)
+                case .success(let value):
+                    DispatchQueue.main.async {
+                        self.movieListModel = value
+                        self.searchTableViewController = SearchTableViewController(movieList: self.movieListModel, searchTextEndEditing: self.searchBarTextField)
+                        self.addChildVC(self.searchTableViewController)
+                        self.buildSearchListConstraints()
+                    }
+                }
+            })
+        }
     }
 }
 
@@ -237,48 +290,7 @@ extension UIViewController {
 
     func removeChildVC(_ child: UIViewController) {
         child.willMove(toParent: nil)
-        child.removeFromParent()
         child.view.removeFromSuperview()
+        child.removeFromParent()
     }
 }
-
-extension MovieListViewController: MovieDetailsSelectionDelegate {
-    func didSelectMovie(selectedMovie: MovieModel) {
-        
-        let vc = MovieDetailsViewController(movie: selectedMovie)
-        
-        UIApplication.topViewController()?.navigationController?.pushViewController(vc, animated: true)
-    }
-}
-
-extension UIApplication {
-    
-    class func topViewController(_ viewController: UIViewController? = UIApplication.shared.keyWindow?.rootViewController) -> UIViewController? {
-        if let nav = viewController as? UINavigationController {
-            return topViewController(nav.visibleViewController)
-        }
-        if let tab = viewController as? UITabBarController {
-            if let selected = tab.selectedViewController {
-                return topViewController(selected)
-            }
-        }
-        if let presented = viewController?.presentedViewController {
-            return topViewController(presented)
-        }
-        return viewController
-    }
-    
-    class func topNavigationController(_ viewController: UIViewController? = UIApplication.shared.keyWindow?.rootViewController) -> UINavigationController? {
-        
-        if let nav = viewController as? UINavigationController {
-            return nav
-        }
-        if let tab = viewController as? UITabBarController {
-            if let selected = tab.selectedViewController {
-                return selected.navigationController
-            }
-        }
-        return viewController?.navigationController
-    }
-}
-

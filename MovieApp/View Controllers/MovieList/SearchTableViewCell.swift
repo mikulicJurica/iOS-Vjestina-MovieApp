@@ -10,6 +10,8 @@ class SearchTableViewCell: UITableViewCell {
     private var movieImageView: UIImageView!
     private var movieNameLabel: UILabel!
     private var movieDescriptionLabel: UILabel!
+    
+    private var cellMovie: MovieModel!
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -80,24 +82,32 @@ class SearchTableViewCell: UITableViewCell {
         movieDescriptionLabel.snp.makeConstraints({
             $0.leading.equalTo(movieImageView.snp.trailing).offset(StyleConstants.MovieTableViewCellLengths.spaceLengthMedium)
             $0.top.equalTo(movieNameLabel.snp.bottom).offset(StyleConstants.MovieTableViewCellLengths.spaceLengthMedium/3)
-            $0.trailing.equalToSuperview()
-            $0.bottom.equalToSuperview().inset(StyleConstants.MovieTableViewCellLengths.spaceLengthSmall)
+            $0.trailing.bottom.equalToSuperview().inset(StyleConstants.MovieTableViewCellLengths.spaceLengthSmall)
         })
     }
     
-    func set(movieName: String, movieDescription: String, movieImageUrl: String) {
+    func set(movie: MovieModel) {
         
-        guard let imageURL = URL(string: movieImageUrl) else { return }
+        cellMovie = movie
         
+        let imageUrl = "https://image.tmdb.org/t/p/original" + cellMovie.posterPath
+        guard let url = URL(string: imageUrl) else { return }
+
         DispatchQueue.global().async {
-            guard let imageData = try? Data(contentsOf: imageURL) else { return }
+            guard let imageData = try? Data(contentsOf: url) else { return }
 
             let image = UIImage(data: imageData)
+
             DispatchQueue.main.async {
                 self.movieImageView.image = image
-                self.movieNameLabel.text = movieName
-                self.movieDescriptionLabel.text = movieDescription
             }
         }
+        movieNameLabel.text = cellMovie.title
+        movieDescriptionLabel.text = cellMovie.overview
     }
+    
+    func getMovie() -> MovieModel {
+        return cellMovie
+    }
+    
 }

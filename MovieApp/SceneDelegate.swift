@@ -15,6 +15,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let movieListViewController = UINavigationController(rootViewController: MovieListViewController())
         let favouritesViewController = UINavigationController(rootViewController: FavouritesViewController())
         
+        //let vc = UINavigationController(rootViewController: TestViewController())
+        
         movieListViewController.tabBarItem = UITabBarItem(title: "Home", image: UIImage(named: "home"), selectedImage: UIImage(named: "home_app_pressed"))
         favouritesViewController.tabBarItem = UITabBarItem(title: "Favourites", image: UIImage(named: "favorites"), selectedImage: UIImage(named: "favorites_app_pressed"))
         
@@ -24,6 +26,37 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.rootViewController = tabBarController
         window?.makeKeyAndVisible()
         
+    }
+}
+
+extension UIApplication {
+    
+    class func topViewController(_ viewController: UIViewController? = UIApplication.shared.keyWindow?.rootViewController) -> UIViewController? {
+        if let nav = viewController as? UINavigationController {
+            return topViewController(nav.visibleViewController)
+        }
+        if let tab = viewController as? UITabBarController {
+            if let selected = tab.selectedViewController {
+                return topViewController(selected)
+            }
+        }
+        if let presented = viewController?.presentedViewController {
+            return topViewController(presented)
+        }
+        return viewController
+    }
+    
+    class func topNavigationController(_ viewController: UIViewController? = UIApplication.shared.keyWindow?.rootViewController) -> UINavigationController? {
+        
+        if let nav = viewController as? UINavigationController {
+            return nav
+        }
+        if let tab = viewController as? UITabBarController {
+            if let selected = tab.selectedViewController {
+                return selected.navigationController
+            }
+        }
+        return viewController?.navigationController
     }
 }
 

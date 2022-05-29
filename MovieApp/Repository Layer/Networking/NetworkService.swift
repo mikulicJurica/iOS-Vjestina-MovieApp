@@ -1,59 +1,43 @@
 import Foundation
 
 protocol NetworkServiceProtocol {
-    func getMovieListSuccess(movieList: MovieListModel)
-    func getGenreListSuccess(genreList: GenreListModel)
-    func didFailWithError(error: Error)
 }
 
 class NetworkService {
     
-    var delegate: NetworkServiceProtocol?
-    
     let apiKey = "73b799ad19dc8be5b63d80264b6b1fa2"
     let baseUrl = "https://api.themoviedb.org/3/"
     
-    func getMovieList(listName: String) {
+    func getMovieList(listName: String, completionHandler: @escaping (Result<MovieListModel, RequestError>) -> Void) {
         let trendingInterval = "day"
         var url: URL!
-        
+
         if (listName == "recommendations") {
-            
             url = URL(string: "\(baseUrl)movie/103/recommendations?language=en-US&page=1&api_key=\(apiKey)")!
             
         } else if (listName == "trending") {
             url = URL(string: "\(baseUrl)trending/movie/\(trendingInterval)?api_key=73b799ad19dc8be5b63d80264b6b1fa2&page=1")!
+
         } else {
             url = URL(string: "\(baseUrl)movie/\(listName)?language=en-US&page=1&api_key=\(apiKey)")!
+
         }
-        
+    
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        
-        executeUrlRequest(request) { (result: Result<MovieListModel, RequestError>) in
-            switch result {
-            case .failure(let error):
-                self.delegate?.didFailWithError(error: error)
-            case .success(let value):
-                self.delegate?.getMovieListSuccess(movieList: value)
-        } }
+
+        executeUrlRequest(request, completionHandler: completionHandler)
     }
     
-    func getGenreList() {
+    func getGenreList(completionHandler: @escaping (Result<GenreListModel, RequestError>) -> Void) {
         let url = URL(string: "\(baseUrl)genre/movie/list?language=en-US&api_key=\(apiKey)")!
         
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        
-        executeUrlRequest(request) { (result: Result<GenreListModel, RequestError>) in
-            switch result {
-            case .failure(let error):
-                self.delegate?.didFailWithError(error: error)
-            case .success(let value):
-                self.delegate?.getGenreListSuccess(genreList: value)
-        } }
+
+        executeUrlRequest(request, completionHandler: completionHandler)
     }
     
     private func executeUrlRequest<T: Decodable>(_ request: URLRequest, completionHandler: @escaping (Result<T, RequestError>) -> Void) {

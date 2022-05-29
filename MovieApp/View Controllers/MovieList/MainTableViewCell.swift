@@ -6,22 +6,24 @@ class MainTableViewCell: UITableViewCell {
     private var cellView: UIView!
     
     private var moviesGroup: UILabel!
-    private var buttonFiltersStackView: UIStackView!
     
-    private var button0: UIButton!
-    private var button1: UIButton!
-    private var button2: UIButton!
+    private var buttonFiltersStackView: UIStackView!
+    private var buttonList: [UIButton]!
+    
+    //scroll view variables
+    private var scrollView: UIScrollView!
+    private var contentScrollView: UIView!
     
     private var collectionView: UICollectionView!
     
+    private var movieGroups = MovieGroups.allCases
+    
     private var networkService = NetworkService()
     
-    private var movieListModel: MovieListModel!
+    private var movieListModel = MovieListModel(results: [])
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        
-        networkService.delegate = self
 
         buildCell()
         buildCellConstraints()
@@ -42,35 +44,28 @@ class MainTableViewCell: UITableViewCell {
         
         buttonFiltersStackView = UIStackView()
         buttonFiltersStackView.axis = .horizontal
-        buttonFiltersStackView.alignment = .leading
-        buttonFiltersStackView.distribution = .fillEqually
-        buttonFiltersStackView.spacing = 0
+        buttonFiltersStackView.spacing = 15
         
-        cellView.addSubview(buttonFiltersStackView)
+        buttonList = [UIButton()]
         
-        button0 = UIButton()
-        button1 = UIButton()
-        button2 = UIButton()
+        scrollView = UIScrollView()
+        cellView.addSubview(scrollView)
+        contentScrollView = UIView()
+        scrollView.addSubview(contentScrollView)
+        scrollView.bounces = false
         
-        button0.addTarget(self, action: #selector(buttonPressed0), for: .touchUpInside)
-        button1.addTarget(self, action: #selector(buttonPressed1), for: .touchUpInside)
-        button2.addTarget(self, action: #selector(buttonPressed2), for: .touchUpInside)
-        
-        buttonFiltersStackView.addArrangedSubview(button0)
-        buttonFiltersStackView.addArrangedSubview(button1)
-        buttonFiltersStackView.addArrangedSubview(button2)
+        contentScrollView.addSubview(buttonFiltersStackView)
         
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
 
         collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        cellView.addSubview(collectionView)
         
         collectionView.register(CollectionViewCell.self, forCellWithReuseIdentifier: CollectionViewCell.reuseIdentifier)
         cellView.addSubview(collectionView)
         
-        
         collectionView.delegate = self
+        
     }
     
     private func buildCellConstraints() {
@@ -83,10 +78,20 @@ class MainTableViewCell: UITableViewCell {
             $0.top.leading.trailing.equalToSuperview()
         })
         
-        buttonFiltersStackView.snp.makeConstraints({
+        scrollView.snp.makeConstraints({
             $0.top.equalTo(moviesGroup.snp.bottom).offset(8)
             $0.leading.trailing.equalToSuperview()
             $0.height.equalTo(30)//za sad
+        })
+        
+        contentScrollView.snp.makeConstraints({
+            $0.edges.equalToSuperview()
+            $0.height.equalToSuperview()
+        })
+        
+        buttonFiltersStackView.snp.makeConstraints({
+            $0.top.bottom.equalToSuperview().inset(5)
+            $0.leading.trailing.equalToSuperview()
         })
         
         collectionView.snp.makeConstraints {
@@ -98,92 +103,98 @@ class MainTableViewCell: UITableViewCell {
     
     func set(inputGroup: MovieGroups) {
         
+        networkService.getGenreList(completionHandler: {(result: Result<GenreListModel, RequestError>) in
+            switch result {
+            case .success(let value):
+                DispatchQueue.main.async {
+                    let buttonFont = UIFont(name: "Verdana", size: 16)
+                    let buttonAttributes: [NSAttributedString.Key: Any] = [.font: buttonFont!, .foregroundColor: StyleConstants.AppColors.textLightGray]
+                    let buttonAttributesBlack: [NSAttributedString.Key: Any] = [.font: buttonFont!, .foregroundColor: UIColor.black, .underlineStyle: NSUnderlineStyle.thick.rawValue]
+                    
+                    for i in (0...value.genres.count - 1) {
+                        let tmpButton = UIButton()
+                        if (i == 0) {
+                            let buttonAttributedText = NSAttributedString(string: value.genres[i].name, attributes: buttonAttributesBlack)
+                            tmpButton.setAttributedTitle(buttonAttributedText, for: .normal)
+                            tmpButton.tag = (i + 1)
+                            tmpButton.addTarget(self, action: #selector(self.buttonFilterTap(sender:)), for: .touchUpInside)
+                            self.buttonList.append(tmpButton)
+                            self.buttonFiltersStackView.addArrangedSubview(tmpButton)
+                        }
+                        else {
+                            let buttonAttributedText = NSAttributedString(string: value.genres[i].name, attributes: buttonAttributes)
+                            tmpButton.setAttributedTitle(buttonAttributedText, for: .normal)
+                            tmpButton.tag = (i + 1)
+                            tmpButton.addTarget(self, action: #selector(self.buttonFilterTap(sender:)), for: .touchUpInside)
+                            self.buttonList.append(tmpButton)
+                            self.buttonFiltersStackView.addArrangedSubview(tmpButton)
+                        }
+                    }
+                }
+            case .failure(let error):
+                print(error)
+            }
+        })
+        
+        let urlListName: String!
+        let labelName: String!
+        
+        switch inputGroup {
+        case .popular:
+            urlListName = "popular"
+            labelName = "What's popular"
+        case .trending:
+            urlListName = "trending"
+            labelName = "Trending"
+        case .topRated:
+            urlListName = "top_rated"
+            labelName = "Top Rated"
+        case .recommendations:
+            urlListName = "recommendations"
+            labelName = "Recommendations"
+        }
+        
+        networkService.getMovieList(listName: urlListName, completionHandler: { (result: Result<MovieListModel, RequestError>) in
+            switch result {
+            case .failure(let error):
+                print(error)
+            case .success(let value):
+                DispatchQueue.main.async {
+                    self.movieListModel = value
+                    self.collectionView.dataSource = self
+                    self.moviesGroup.text = labelName
+                }
+            }
+        })
+    }
+    
+    @objc private func buttonFilterTap(sender: UIButton) {
         let buttonFont = UIFont(name: "Verdana", size: 16)
         let buttonAttributes: [NSAttributedString.Key: Any] = [.font: buttonFont!, .foregroundColor: StyleConstants.AppColors.textLightGray]
         let buttonAttributesBlack: [NSAttributedString.Key: Any] = [.font: buttonFont!, .foregroundColor: UIColor.black, .underlineStyle: NSUnderlineStyle.thick.rawValue]
         
-        
-        networkService.getGenreList()
-        
-        var buttonAttributedText = NSAttributedString(string: "Action", attributes: buttonAttributesBlack)
-        button0.setAttributedTitle(buttonAttributedText, for: .normal)
-        buttonAttributedText = NSAttributedString(string: "Adventure", attributes: buttonAttributes)
-        button1.setAttributedTitle(buttonAttributedText, for: .normal)
-        buttonAttributedText = NSAttributedString(string: "Animation", attributes: buttonAttributes)
-        button2.setAttributedTitle(buttonAttributedText, for: .normal)
-        
-        switch inputGroup {
-        case .popular:
-            
-            networkService.getMovieList(listName: "popular")
-            moviesGroup.text = "What's popular"
-            
-        case .trending:
-            
-            networkService.getMovieList(listName: "trending")
-            moviesGroup.text = "Trending"
-            
-        case .topRated:
-            
-            networkService.getMovieList(listName: "top_rated")
-            moviesGroup.text = "Top Rated"
-            
-        case .recommendations:
-            
-            networkService.getMovieList(listName: "recommendations")
-            moviesGroup.text = "Recommendations"
-            
+        for i in (1...buttonList.count - 1) {
+            if (i == sender.tag) {
+                let buttonAttributedText = NSAttributedString(string: (buttonList[i].titleLabel?.text)!, attributes: buttonAttributesBlack)
+                buttonList[i].setAttributedTitle(buttonAttributedText, for: .normal)
+            }
+            else {
+                let buttonAttributedText = NSAttributedString(string: (buttonList[i].titleLabel?.text)!, attributes: buttonAttributes)
+                buttonList[i].setAttributedTitle(buttonAttributedText, for: .normal)
+            }
         }
-    }
-    
-    @objc private func buttonPressed0(sender: UIButton) {
-        let buttonFont = UIFont(name: "Verdana", size: 16)
-        let buttonAttributesBlack: [NSAttributedString.Key: Any] = [.font: buttonFont!, .foregroundColor: UIColor.black, .underlineStyle: NSUnderlineStyle.thick.rawValue]
-        let buttonAttributedText = NSAttributedString(string: (sender.titleLabel?.text)!, attributes: buttonAttributesBlack)
-        sender.setAttributedTitle(buttonAttributedText, for: .normal)
-        
-        let buttonAttributesGrey: [NSAttributedString.Key: Any] = [.font: buttonFont!, .foregroundColor: StyleConstants.AppColors.textLightGray]
-        
-        let buttonAttributedTextGrey1 = NSAttributedString(string: (button1.titleLabel?.text)!, attributes: buttonAttributesGrey)
-        button1.setAttributedTitle(buttonAttributedTextGrey1, for: .normal)
-        
-        let buttonAttributedTextGrey2 = NSAttributedString(string: (button2.titleLabel?.text)!, attributes: buttonAttributesGrey)
-        button2.setAttributedTitle(buttonAttributedTextGrey2, for: .normal)
-    }
-    
-    @objc private func buttonPressed1(sender: UIButton) {
-        let buttonFont = UIFont(name: "Verdana", size: 16)
-        let buttonAttributesBlack: [NSAttributedString.Key: Any] = [.font: buttonFont!, .foregroundColor: UIColor.black, .underlineStyle: NSUnderlineStyle.thick.rawValue]
-        let buttonAttributedText = NSAttributedString(string: (sender.titleLabel?.text)!, attributes: buttonAttributesBlack)
-        sender.setAttributedTitle(buttonAttributedText, for: .normal)
-        
-        let buttonAttributesGrey: [NSAttributedString.Key: Any] = [.font: buttonFont!, .foregroundColor: StyleConstants.AppColors.textLightGray]
-        
-        let buttonAttributedTextGrey0 = NSAttributedString(string: (button0.titleLabel?.text)!, attributes: buttonAttributesGrey)
-        button0.setAttributedTitle(buttonAttributedTextGrey0, for: .normal)
-        
-        let buttonAttributedTextGrey2 = NSAttributedString(string: (button2.titleLabel?.text)!, attributes: buttonAttributesGrey)
-        button2.setAttributedTitle(buttonAttributedTextGrey2, for: .normal)
-    }
-    
-    @objc private func buttonPressed2(sender: UIButton) {
-        let buttonFont = UIFont(name: "Verdana", size: 16)
-        let buttonAttributesBlack: [NSAttributedString.Key: Any] = [.font: buttonFont!, .foregroundColor: UIColor.black, .underlineStyle: NSUnderlineStyle.thick.rawValue]
-        let buttonAttributedText = NSAttributedString(string: (sender.titleLabel?.text)!, attributes: buttonAttributesBlack)
-        sender.setAttributedTitle(buttonAttributedText, for: .normal)
-        
-        let buttonAttributesGrey: [NSAttributedString.Key: Any] = [.font: buttonFont!, .foregroundColor: StyleConstants.AppColors.textLightGray]
-        
-        let buttonAttributedTextGrey1 = NSAttributedString(string: (button1.titleLabel?.text)!, attributes: buttonAttributesGrey)
-        button1.setAttributedTitle(buttonAttributedTextGrey1, for: .normal)
-        
-        let buttonAttributedTextGrey0 = NSAttributedString(string: (button0.titleLabel?.text)!, attributes: buttonAttributesGrey)
-        button0.setAttributedTitle(buttonAttributedTextGrey0, for: .normal)
     }
 }
 
 extension MainTableViewCell: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let currentCell = collectionView.cellForItem(at: indexPath) as! CollectionViewCell
+        let selectedMovie = currentCell.getMovie()
+        
+        let vc = MovieDetailsViewController(movie: selectedMovie)
 
+        UIApplication.topViewController()?.navigationController?.pushViewController(vc, animated: true)
+    }
 }
 
 extension MainTableViewCell: UICollectionViewDelegateFlowLayout {
@@ -211,26 +222,5 @@ extension MainTableViewCell: UICollectionViewDataSource {
         
         cell.set(movie: movieListModel.results[indexPath.row])
         return cell
-    }
-
-}
-
-extension MainTableViewCell: NetworkServiceProtocol {
-    func getGenreListSuccess(genreList: GenreListModel) {
-        //print(genreList.genres[3].name)
-    }
-    
-    func getMovieListSuccess(movieList: MovieListModel) {
-        
-        movieListModel = movieList
-        
-        collectionView.dataSource = self
-    }
-    
-    func getMovieSuccess(movie: MovieModel) {
-    }
-    
-    func didFailWithError(error: Error) {
-        print(error)
     }
 }

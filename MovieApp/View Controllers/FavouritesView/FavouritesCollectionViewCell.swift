@@ -1,27 +1,27 @@
 import UIKit
 import SnapKit
 
-class CollectionViewCell: UICollectionViewCell {
+class FavouritesCollectionViewCell: UICollectionViewCell {
     
-    static let reuseIdentifier = String(describing: CollectionViewCell.self)
-
+    static let reuseIdentifier = String(describing: FavouritesCollectionViewCell.self)
+    
     private var cellView: UIView!
     private var movieImageView: UIImageView!
     private var favouritesButton: UIButton!
     
     private var cellMovie: MovieModel!
-
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         
         buildViews()
-        addConstraints()
+        buildConstraints()
     }
-
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
     func buildViews() {
         layer.backgroundColor = UIColor.white.cgColor
         
@@ -44,7 +44,7 @@ class CollectionViewCell: UICollectionViewCell {
         cellView.addSubview(favouritesButton)
     }
 
-    func addConstraints() {
+    func buildConstraints() {
         cellView.snp.makeConstraints({
             $0.edges.equalToSuperview()
         })
@@ -59,8 +59,8 @@ class CollectionViewCell: UICollectionViewCell {
         })
     }
     
-    func set(movie: MovieModel) {
-        cellMovie = movie
+    func set(inputMovie: MovieModel) {
+        cellMovie = inputMovie
         
         let imageUrl = "https://image.tmdb.org/t/p/original" + cellMovie.posterPath
         guard let url = URL(string: imageUrl) else { return }
@@ -76,7 +76,7 @@ class CollectionViewCell: UICollectionViewCell {
         }
     }
     
-    func getMovie() -> MovieModel {
+    func returnMovieFunction() -> MovieModel {
         return cellMovie
     }
 }

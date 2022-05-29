@@ -71,7 +71,7 @@ class MovieDetailsViewController: UIViewController {
     }
     
     @objc private func goBack() {
-        self.navigationController?.popViewController(animated: true)
+        UIApplication.topViewController()?.navigationController?.popViewController(animated: true)
     }
     
     private func scrollViewFunc() {
@@ -164,8 +164,8 @@ class MovieDetailsViewController: UIViewController {
         let userScore = movie.voteAverage * 10
         let angle = -(.pi/2)+(userScore/100.0)*(.pi*2)
             
-        let path1 = UIBezierPath(arcCenter: percentageView.center, radius: 19.5, startAngle: angle, endAngle: -.pi/2, clockwise: true)
-        let path2 = UIBezierPath(arcCenter: percentageView.center, radius: 19.5, startAngle: -.pi/2, endAngle: angle, clockwise: true)
+        let path1 = UIBezierPath(arcCenter: percentageView.center, radius: 19.5, startAngle: CGFloat(angle), endAngle: -.pi/2, clockwise: true)
+        let path2 = UIBezierPath(arcCenter: percentageView.center, radius: 19.5, startAngle: -.pi/2, endAngle: CGFloat(angle), clockwise: true)
         
         let shapeLayer1 = CAShapeLayer()
         shapeLayer1.path = path1.cgPath

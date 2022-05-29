@@ -1,10 +1,9 @@
 import Foundation
 
 struct MovieListModel: Codable {
-    let results: [MovieModel]
+    var results: [MovieModel]
     
     enum CodingKeys: String, CodingKey {
         case results
     }
 }
-

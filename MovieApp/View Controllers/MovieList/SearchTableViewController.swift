@@ -1,6 +1,5 @@
 import UIKit
 import SnapKit
-import MovieAppData
 
 //table view of searching movies
 class SearchTableViewController: UIViewController {
@@ -10,20 +9,27 @@ class SearchTableViewController: UIViewController {
     
     let searchTableViewCellName = "MovieTableViewCell"
     
+    private var networkService = NetworkService()
     
-    private let movies = Movies.all()
+    private var movieListModel = MovieListModel(results: [])
     
+    private var searchTextField: UITextField!
 
+    init(movieList: MovieListModel, searchTextEndEditing: UITextField) {
+        self.movieListModel = movieList
+        self.searchTextField = searchTextEndEditing
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
         buildTableSearchingListView()
         addSearchingListConstraints()
-    }
-    
-    func reloadListMovies() {
-        
-        movieSearchListTableView.reloadData()
     }
     
     private func buildTableSearchingListView() {
@@ -50,7 +56,7 @@ extension SearchTableViewController: UITableViewDataSource {
         return 1
     }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return movies.count
+        return movieListModel.results.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -60,12 +66,22 @@ extension SearchTableViewController: UITableViewDataSource {
             fatalError()
         }
         
-        let movieTmp = movies[indexPath.row]
+        let movieModel = movieListModel.results[indexPath.row]
         
-        cell.set(movieName: movieTmp.title, movieDescription: movieTmp.description, movieImageUrl: movieTmp.imageUrl)
+        cell.set(movie: movieModel)
         cell.selectionStyle = .none
         
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let currentCell = tableView.cellForRow(at: indexPath) as! SearchTableViewCell
+        let selectedMovie = currentCell.getMovie()
+        
+        let vc = MovieDetailsViewController(movie: selectedMovie)
+        UIApplication.topViewController()?.navigationController?.pushViewController(vc, animated: true)
+        
+        searchTextField.endEditing(true)
     }
 }
 

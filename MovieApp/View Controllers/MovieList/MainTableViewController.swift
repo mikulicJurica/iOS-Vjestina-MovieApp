@@ -4,7 +4,6 @@ import SnapKit
 class MainTableViewController: UIViewController {
     
     private var mainTableView: UITableView!
-    
     private var mainTableViewCellName = "MovieTableViewCell"
     
     private var movieGroups = MovieGroups.allCases
