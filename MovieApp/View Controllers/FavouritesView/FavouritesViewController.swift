@@ -8,7 +8,6 @@ class FavouritesViewController: UIViewController {
     private var favouritesCollectionView: UICollectionView!
     
     private var favouritesMovieListModel: [MovieModel] = []
-    
     private var moviesRepository = MoviesRepository()
     
     override func viewDidLoad() {

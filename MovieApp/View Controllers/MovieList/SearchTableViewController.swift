@@ -9,14 +9,14 @@ class SearchTableViewController: UIViewController {
     
     let searchTableViewCellName = "MovieTableViewCell"
     
-    private var networkService = NetworkService()
-    
-    private var movieListModel = MovieListModel(results: [])
-    
     private var searchTextField: UITextField!
+    
+    private var searchTextFieldText: String!
+    private var searchingMovieModel: [MovieModel] = []
+    private var moviesRepository = MoviesRepository()
 
-    init(movieList: MovieListModel, searchTextEndEditing: UITextField) {
-        self.movieListModel = movieList
+    init(searchTextFieldText: String, searchTextEndEditing: UITextField) {
+        self.searchTextFieldText = searchTextFieldText
         self.searchTextField = searchTextEndEditing
         super.init(nibName: nil, bundle: nil)
     }
@@ -27,9 +27,13 @@ class SearchTableViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        buildTableSearchingListView()
-        addSearchingListConstraints()
+        
+        moviesRepository.getSearchingMovies(searchString: searchTextFieldText, completion: { movieList in
+            self.searchingMovieModel = movieList!
+            self.buildTableSearchingListView()
+            self.addSearchingListConstraints()
+            print(searchingMovieModel.count)
+        })
     }
     
     private func buildTableSearchingListView() {
@@ -56,7 +60,7 @@ extension SearchTableViewController: UITableViewDataSource {
         return 1
     }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return movieListModel.results.count
+        return searchingMovieModel.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -66,7 +70,7 @@ extension SearchTableViewController: UITableViewDataSource {
             fatalError()
         }
         
-        let movieModel = movieListModel.results[indexPath.row]
+        let movieModel = searchingMovieModel[indexPath.row]
         
         cell.set(movie: movieModel)
         cell.selectionStyle = .none

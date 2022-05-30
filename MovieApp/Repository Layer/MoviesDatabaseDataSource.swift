@@ -61,9 +61,9 @@ class MoviesDatabaseDataSource {
         newMovie.video = inputMovie.video
         newMovie.favorite = false
         
-        let group = fetchGroup(inputGroupName: groupName)
-        
-        newMovie.addToGroups(group[0])
+//        let group = fetchGroup(inputGroupName: groupName)
+//
+//        newMovie.addToGroups(group[0])
         
         do {
             try managedContext.save()
@@ -163,10 +163,10 @@ class MoviesDatabaseDataSource {
         }
     }
     
-    private func fetchMovieSearchFiltering(filterText: String, completion: ([MovieModel]?) -> Void) {
+    func fetchMovieSearchFiltering(filterText: String, completion: ([MovieModel]?) -> Void) {
         do {
             let request = Movie.fetchRequest()
-            let pred = NSPredicate(format: "name CONTAINS %@", filterText)
+            let pred = NSPredicate(format: "title CONTAINS %@", "\(filterText)")
             request.predicate = pred
             
             let movie = try managedContext.fetch(request)

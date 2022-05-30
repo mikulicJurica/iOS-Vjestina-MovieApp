@@ -18,8 +18,6 @@ class MovieListViewController: UIViewController {
     
     private var networkService = NetworkService()
     
-    private var movieListModel = MovieListModel(results: [])
-    
     private var moviesRepository = MoviesRepository()
     
     //network check
@@ -28,8 +26,11 @@ class MovieListViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        moviesRepository.getAllMoviesFromDatabase(completion: { movieList in
-        })
+//        moviesRepository.getAllMoviesFromDatabase(completion: { movieList in
+//            print(movieList?.count)
+//        })
+        
+        moviesRepository.allMoviesFromNetworkToDatabase()
 
         buildViews()
         buildConstraints()
@@ -264,19 +265,11 @@ extension MovieListViewController: UITextFieldDelegate {
     
     func textFieldDidEndEditing(_ textField: UITextField) {
         if (searchingState == true) {
-            networkService.getMovieList(listName: "trending", completionHandler: { (result: Result<MovieListModel, RequestError>) in
-                switch result {
-                case .failure(let error):
-                    print(error)
-                case .success(let value):
-                    DispatchQueue.main.async {
-                        self.movieListModel = value
-                        self.searchTableViewController = SearchTableViewController(movieList: self.movieListModel, searchTextEndEditing: self.searchBarTextField)
-                        self.addChildVC(self.searchTableViewController)
-                        self.buildSearchListConstraints()
-                    }
-                }
-            })
+            
+            self.searchTableViewController = SearchTableViewController(searchTextFieldText: textField.text!, searchTextEndEditing: self.searchBarTextField)
+            self.addChildVC(self.searchTableViewController)
+            self.buildSearchListConstraints()
+            
         }
     }
 }

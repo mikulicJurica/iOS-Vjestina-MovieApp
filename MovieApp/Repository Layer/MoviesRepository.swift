@@ -8,47 +8,30 @@ class MoviesRepository {
     
     private var allMoviesDatabase: [MovieModel] = []
     var movieListModel = MovieListModel(results: [])
-        
     
     func getAllMoviesFromDatabase(completion: ([MovieModel]?) -> Void) {
         
-        if (self.allMoviesDatabase.count != 0) {
-            print("nije prazno")
-            movieDatabaseDataSource.fetchAllMovies(completion: { movie in
-                if let movie = movie {
-                    allMoviesDatabase = movie
-                }
-                completion(allMoviesDatabase)
-            })
-        }
-        
-        
-        //first launch
-        else {
-            
-            allMoviesFromNetworkToDatabase()
-            
-            movieDatabaseDataSource.fetchAllMovies(completion: { movie in
-                if let movie = movie {
-                    allMoviesDatabase = movie
-                }
-                completion(allMoviesDatabase)
-            })
-        }
-    }
-    
-    
-    //problem
-    func getMovieTop() {
-        
-        movieDatabaseDataSource.fetchMoviesInsideGroup(inputNameGroup: "top_rated", completion: { movie in
+        movieDatabaseDataSource.fetchAllMovies(completion: { movie in
             if let movie = movie {
                 allMoviesDatabase = movie
             }
-//            DispatchQueue.main.async {
-//                print(self.allMoviesDatabase)
-//            }
+            completion(allMoviesDatabase)
         })
+        
+    }
+    
+    //if database is empty
+    func allMoviesFromNetworkToDatabase() {
+        
+        let listOfGroups = ["popular", "trending", "top_rated", "recommendations"]
+        
+        for group in listOfGroups {
+            moviesNetworkDataSource.fetchMoviesByGroupName(inputGroup: group) { completion in
+                for movie in completion.results {
+                    self.movieDatabaseDataSource.saveMovieFirstTime(inputMovie: movie, groupName: group)
+                }
+            }
+        }
     }
     
     func getMovieGenres() {
@@ -66,20 +49,28 @@ class MoviesRepository {
     }
     
     
-    //if database is empty
-    func allMoviesFromNetworkToDatabase() {
-        
-        let listOfGroups = ["popular", "trending", "top_rated", "recommendations"]
-        
-        for group in listOfGroups {
-            moviesNetworkDataSource.fetchMoviesByGroupName(inputGroup: group) { completion in
-                for movie in completion.results {
-                    self.movieDatabaseDataSource.saveMovieFirstTime(inputMovie: movie, groupName: group)
-                }
+    func getSearchingMovies(searchString: String, completion: ([MovieModel]?) -> Void) {
+        movieDatabaseDataSource.fetchMovieSearchFiltering(filterText: searchString, completion: { movie in
+            if let movie = movie {
+                allMoviesDatabase = movie
             }
-        }
+            completion(allMoviesDatabase)
+        })
     }
     
-    func getMoviesGroup() {
+    
+    //problem
+    func getMovieTop() {
+        
+        movieDatabaseDataSource.fetchMoviesInsideGroup(inputNameGroup: "top_rated", completion: { movie in
+            if let movie = movie {
+                allMoviesDatabase = movie
+            }
+            //            DispatchQueue.main.async {
+            //                print(self.allMoviesDatabase)
+            //            }
+        })
     }
+    
+    
 }
