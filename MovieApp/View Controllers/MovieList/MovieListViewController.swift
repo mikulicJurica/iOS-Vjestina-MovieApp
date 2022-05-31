@@ -30,7 +30,13 @@ class MovieListViewController: UIViewController {
 //            print(movieList?.count)
 //        })
         
-        moviesRepository.allMoviesFromNetworkToDatabase()
+        moviesRepository.getMovieTop(completion: { movieList in
+            print(movieList?.count)
+        })
+        
+        
+        //moviesRepository.relationships()
+        //moviesRepository.allMoviesFromNetworkToDatabase()
 
         buildViews()
         buildConstraints()

@@ -26,16 +26,30 @@ class MoviesDatabaseDataSource {
     func fetchMoviesInsideGroup(inputNameGroup: String, completion: ([MovieModel]?) -> Void) {
         
         do {
-            let movie = try managedContext.fetch(Movie.fetchRequest())
-            var singleMovieModel = [MovieModel]()
-            
-            for i in movie {
-                if (i.groups == NSString(utf8String: inputNameGroup)) { //!!!!!!!!!!
-                    let tempMovie = MovieModel(id: Int(i.id), title: i.title!, posterPath: i.posterPath!, releaseDate: i.releaseDate!, voteAverage: i.voteAverage, genreIds: i.genreIds!, adult: i.adult, backdropPath: i.backdropPath!, originalLanguage: i.originalLanguage!, originalTitle: i.originalTitle!, overview: i.overview!, voteCount: i.voteCount, popularity: i.popularity, video: i.video)
-                    singleMovieModel.append(tempMovie)
-                }
+           
+            let request: NSFetchRequest<MovieGroup> = MovieGroup.fetchRequest()
+            let predicate = NSPredicate(format: "name = %@", "\(inputNameGroup)")
+            request.predicate = predicate
+            request.fetchLimit = 1
+
+            do {
+                let movieGroup = try managedContext.fetch(request)
+                print(movieGroup[0].movie)
+
+            } catch let error as NSError {
+                print("Could not fetch. \(error), \(error.userInfo)")
             }
-            completion(singleMovieModel)
+            
+//            let movie = try managedContext.fetch(Movie.fetchRequest())
+//            var singleMovieModel = [MovieModel]()
+//
+//            for i in movie {
+//                if (i.groups == NSString(utf8String: inputNameGroup)) { //!!!!!!!!!!
+//                    let tempMovie = MovieModel(id: Int(i.id), title: i.title!, posterPath: i.posterPath!, releaseDate: i.releaseDate!, voteAverage: i.voteAverage, genreIds: i.genreIds!, adult: i.adult, backdropPath: i.backdropPath!, originalLanguage: i.originalLanguage!, originalTitle: i.originalTitle!, overview: i.overview!, voteCount: i.voteCount, popularity: i.popularity, video: i.video)
+//                    singleMovieModel.append(tempMovie)
+//                }
+//            }
+//            completion(singleMovieModel)
             
         } catch let error as NSError {
             print("Could not fetch. \(error), \(error.userInfo)")
@@ -61,9 +75,11 @@ class MoviesDatabaseDataSource {
         newMovie.video = inputMovie.video
         newMovie.favorite = false
         
-//        let group = fetchGroup(inputGroupName: groupName)
-//
-//        newMovie.addToGroups(group[0])
+        let group = fetchGroup(inputGroupName: groupName)
+        newMovie.addToGroups(group[0])
+        
+//        print(group)
+//        print(newMovie.groups)
         
         do {
             try managedContext.save()
@@ -87,15 +103,15 @@ class MoviesDatabaseDataSource {
             else {
                 movie[0].favorite = true
             }
+            
+            do {
+                try managedContext.save()
+            } catch let error as NSError {
+                print("Could not update. \(error), \(error.userInfo)")
+            }
 
         } catch let error as NSError {
             print("Could not fetch. \(error), \(error.userInfo)")
-        }
-
-        do {
-            try managedContext.save()
-        } catch let error as NSError {
-            print("Could not update. \(error), \(error.userInfo)")
         }
     }
     
@@ -138,6 +154,8 @@ class MoviesDatabaseDataSource {
         
         let movieGroup = MovieGroup(context: managedContext)
         movieGroup.name = inputGroupName
+        
+        print(movieGroup)
         
         do {
             try managedContext.save()

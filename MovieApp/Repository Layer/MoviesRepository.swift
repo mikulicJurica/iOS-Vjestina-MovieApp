@@ -60,15 +60,13 @@ class MoviesRepository {
     
     
     //problem
-    func getMovieTop() {
+    func getMovieTop(completion: ([MovieModel]?) -> Void) {
         
         movieDatabaseDataSource.fetchMoviesInsideGroup(inputNameGroup: "top_rated", completion: { movie in
             if let movie = movie {
                 allMoviesDatabase = movie
             }
-            //            DispatchQueue.main.async {
-            //                print(self.allMoviesDatabase)
-            //            }
+            completion(allMoviesDatabase)
         })
     }
     
