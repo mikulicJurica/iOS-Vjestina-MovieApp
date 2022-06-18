@@ -12,7 +12,7 @@ class SearchTableViewController: UIViewController {
     private var searchTextField: UITextField!
     
     private var searchTextFieldText: String!
-    private var searchingMovieModel: [MovieModel] = []
+    private var searchingMovieModel: [Movie] = []
     private var moviesRepository = MoviesRepository()
 
     init(searchTextFieldText: String, searchTextEndEditing: UITextField) {

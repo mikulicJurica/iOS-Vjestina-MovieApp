@@ -40,3 +40,24 @@ struct MovieModel: Codable {
     }
     
 }
+
+extension MovieModel {
+     
+    init(from model: Movie) {
+        id = Int(model.id)
+        title = model.title!
+        posterPath = model.posterPath!
+        releaseDate = model.releaseDate!
+        voteAverage = model.voteAverage
+        genreIds = model.genreIds!
+        adult = model.adult
+        backdropPath = model.backdropPath!
+        originalLanguage = model.originalLanguage!
+        originalTitle = model.originalTitle!
+        overview = model.overview!
+        voteCount = model.voteCount
+        popularity = model.popularity
+        video = model.video
+    }
+    
+}

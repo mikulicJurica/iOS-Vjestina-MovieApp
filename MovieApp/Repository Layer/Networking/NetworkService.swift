@@ -12,10 +12,10 @@ class NetworkService {
         let trendingInterval = "day"
         var url: URL!
 
-        if (listName == "recommendations") {
+        if (listName == MovieGroups.recommendations.rawValue) {
             url = URL(string: "\(baseUrl)movie/103/recommendations?language=en-US&page=1&api_key=\(apiKey)")!
             
-        } else if (listName == "trending") {
+        } else if (listName == MovieGroups.trending.rawValue) {
             url = URL(string: "\(baseUrl)trending/movie/\(trendingInterval)?api_key=73b799ad19dc8be5b63d80264b6b1fa2&page=1")!
 
         } else {

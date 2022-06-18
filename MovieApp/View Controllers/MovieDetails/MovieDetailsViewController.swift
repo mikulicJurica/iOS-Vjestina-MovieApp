@@ -19,6 +19,7 @@ class MovieDetailsViewController: UIViewController {
     private var movieDescription: UILabel!
     private var movieLength: UILabel!
     private var favouritesButton: UIButton!
+    private var favouritesImageFill: UIImageView!
     private var percentageView: UIView!
     private var percentageLabel: UILabel!
     private var percentageSign: UILabel!
@@ -34,17 +35,75 @@ class MovieDetailsViewController: UIViewController {
     private var lowerStackView: UIStackView!
     
     //style
+    private var animationConstraint: CGFloat!
     private let movieDetailsTopViewHeight: Float = 400.0
     private let baseLength: Float = 18.0
     private let favouritesButtonSize: Float = 32.0
+    private let favouritesImageFillSize: Float = 16.0
     private let percentageViewSize: Float = 21.0
     private let textElementSpaceSize: Float = 15.0
     
-    private var movie: MovieModel!
+    private var movie: Movie!
     
-    convenience init(movie: MovieModel) {
+    private var moviesRepository = MoviesRepository()
+    
+    convenience init(movie: Movie) {
         self.init()
         self.movie = movie
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        animationConstraint = view.frame.width
+        
+        movieTitle.snp.remakeConstraints({
+            $0.centerX.equalToSuperview().offset(animationConstraint)
+            $0.bottom.equalTo(movieDate.snp.top).offset(-textElementSpaceSize/2)
+        })
+        
+        movieDate.snp.remakeConstraints({
+            $0.centerX.equalToSuperview().offset(animationConstraint)
+            $0.bottom.equalTo(movieDescription.snp.top).offset(-textElementSpaceSize/5)
+        })
+        
+        movieDescription.snp.remakeConstraints({
+            $0.centerX.equalToSuperview().offset(animationConstraint)
+            $0.bottom.equalTo(favouritesButton.snp.top).offset(-textElementSpaceSize)
+        })
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        UIView.animate(withDuration: 1, delay: 0, options: .curveLinear, animations: {
+            self.movieTitle.snp.remakeConstraints {
+                $0.leading.trailing.equalToSuperview().inset(self.baseLength)
+                $0.bottom.equalTo(self.movieDate.snp.top).offset(-self.textElementSpaceSize/2)
+            }
+            
+            self.view.layoutIfNeeded()
+        })
+        
+        UIView.animate(withDuration: 1, delay: 0.5, options: .curveLinear, animations: {
+            self.movieDate.snp.remakeConstraints {
+                $0.leading.trailing.equalToSuperview().inset(self.baseLength)
+                $0.bottom.equalTo(self.movieDescription.snp.top).offset(-self.textElementSpaceSize/5)
+            }
+            
+            self.view.layoutIfNeeded()
+        })
+        
+        UIView.animate(withDuration: 1, delay: 0.75, options: .curveEaseInOut, animations: {
+            self.movieDescription.snp.remakeConstraints {
+                $0.leading.equalToSuperview().inset(self.baseLength)
+                $0.trailing.equalTo(self.movieLength.snp.leading).offset(-self.textElementSpaceSize/2)
+                $0.bottom.equalTo(self.favouritesButton.snp.top).offset(-self.textElementSpaceSize)
+            }
+
+            self.view.layoutIfNeeded()
+        })
+
     }
     
     override func viewDidLoad() {
@@ -96,14 +155,14 @@ class MovieDetailsViewController: UIViewController {
     }
     
     private func movieDetailsTop() -> UIView {
-        let yearStringArr = movie.releaseDate.components(separatedBy: "-")
+        let yearStringArr = movie.releaseDate!.components(separatedBy: "-")
         let yearString = yearStringArr[0]
         let monthString = yearStringArr[1]
         let dayString = yearStringArr[2]
         
         movieDetailsTopView = UIView()
         
-        let imageUrl = "https://image.tmdb.org/t/p/original" + movie.posterPath
+        let imageUrl = "https://image.tmdb.org/t/p/original" + movie.posterPath!
         
         let url = URL(string: imageUrl)
         let data = try? Data(contentsOf: url!)
@@ -128,7 +187,7 @@ class MovieDetailsViewController: UIViewController {
         movieTitle = UILabel()
         movieTitle.textColor = UIColor.white
         movieTitle.font = UIFont(name: "Verdana-Bold", size: 24)
-        movieTitle.text = "\(movie.title) (\(yearString))"
+        movieTitle.text = "\(movie.title ?? "none") (\(yearString))"
         movieDetailsTopView.addSubview(movieTitle)
         
         movieDate = UILabel()
@@ -140,6 +199,11 @@ class MovieDetailsViewController: UIViewController {
         movieDescription = UILabel()
         movieDescription.textColor = UIColor.white
         movieDescription.font = UIFont(name: "Verdana", size: 14)
+        
+        
+        //print(movie.)
+        
+        
         movieDescription.text = "Action, Science Fiction, Adventure"
         movieDetailsTopView.addSubview(movieDescription)
         
@@ -151,13 +215,29 @@ class MovieDetailsViewController: UIViewController {
         movieDetailsTopView.addSubview(movieLength)
         
         favouritesButton = UIButton()
-        favouritesButton.setImage(UIImage(systemName: "star", withConfiguration: UIImage.SymbolConfiguration(scale: .small)), for: .normal)
         favouritesButton.backgroundColor = StyleConstants.AppColors.appBlack
-        favouritesButton.addTarget(self, action: #selector(favouritesButtonTap), for: .touchUpInside)
         favouritesButton.layer.cornerRadius = CGFloat(favouritesButtonSize/2.0)
         favouritesButton.tintColor = UIColor.white
-        movieDetailsTopView.addSubview(favouritesButton)
+        favouritesButton.setImage(UIImage(systemName: "heart", withConfiguration: UIImage.SymbolConfiguration(scale: .default)), for: .normal)
+        favouritesButton.addTarget(self, action: #selector(changeFavoriteState), for: .touchUpInside)
         
+        favouritesImageFill = UIImageView(image: UIImage(named: "favorites"))
+        favouritesImageFill.contentMode = UIView.ContentMode.scaleAspectFill
+        favouritesButton.addSubview(favouritesImageFill)
+        
+        if (movie.favorite) {
+            favouritesImageFill.snp.makeConstraints({
+                $0.width.height.equalTo(favouritesImageFillSize)
+                $0.center.equalToSuperview()
+            })
+        }
+        else {
+            favouritesImageFill.snp.makeConstraints({
+                $0.width.height.equalTo(0.5)
+                $0.center.equalToSuperview()
+            })
+        }
+        movieDetailsTopView.addSubview(favouritesButton)
         
         //percentage view
         percentageView = UIView()
@@ -308,6 +388,11 @@ class MovieDetailsViewController: UIViewController {
             $0.leading.bottom.equalToSuperview().inset(baseLength)
         })
         
+//        favouritesImageFill.snp.makeConstraints({
+//            $0.width.height.equalTo(favouritesImageFillSize)
+//            $0.center.equalToSuperview()
+//        })
+        
         movieLength.snp.makeConstraints({
             $0.trailing.equalToSuperview().inset(60)
             $0.bottom.equalTo(favouritesButton.snp.top).offset(-textElementSpaceSize)
@@ -389,7 +474,45 @@ class MovieDetailsViewController: UIViewController {
         return (minutes / 60, (minutes % 60))
     }
     
-    @objc private func favouritesButtonTap() {
-        print("TAP!")
+    @objc private func changeFavoriteState() {
+        moviesRepository.changeFavoriteMovieState(inputMovie: movie, completion: { isDone in
+            if (isDone) {
+                if (movie.favorite) {
+                    
+                    movie.favorite = false
+                    
+                    UIView.animate(withDuration: 0.75, animations: {
+
+                        self.favouritesImageFill.snp.remakeConstraints({
+                            $0.width.height.equalTo(0.5)
+                            $0.center.equalToSuperview()
+                        })
+
+                        self.view.layoutIfNeeded()
+                    })
+                }
+                else {
+                    
+                    movie.favorite = true
+                    
+                    //favouritesImageFill.isHidden = false
+                    
+//                    favouritesImageFill.snp.remakeConstraints({
+//                        $0.width.height.equalTo(0.5)
+//                        $0.center.equalToSuperview()
+//                    })
+                    
+                    UIView.animate(withDuration: 0.75, animations: {
+
+                        self.favouritesImageFill.snp.remakeConstraints({
+                            $0.width.height.equalTo(self.favouritesImageFillSize)
+                            $0.center.equalToSuperview()
+                        })
+
+                        self.view.layoutIfNeeded()
+                    })
+                }
+            }
+        })
     }
 }

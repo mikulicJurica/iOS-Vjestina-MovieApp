@@ -6,12 +6,56 @@ class MoviesRepository {
     private let movieDatabaseDataSource = MoviesDatabaseDataSource()
     private let moviesNetworkDataSource = MoviesNetworkDataSource()
     
-    private var allMoviesDatabase: [MovieModel] = []
-    var movieListModel = MovieListModel(results: [])
+    private var allMoviesDatabase: [Movie] = []
+    private var allMoviesFromNetwork: [MovieModel] = []
+    private let movieGroups = MovieGroups.allCases
     
-    func getAllMoviesFromDatabase(completion: ([MovieModel]?) -> Void) {
-        
-        movieDatabaseDataSource.fetchAllMovies(completion: { movie in
+    func appLaunch(firstAppLaunchCompletion: @escaping (Bool) -> Void) {
+        let group = movieDatabaseDataSource.fetchGroup(inputGroupName: movieGroups.first?.rawValue ?? "")
+        if (group.count == EMPTY) {
+            print("First app launch")
+            
+            buildRelationships(relationshipsCompletion: { isDone in
+                if (isDone) {
+                    print("Relationships (Groups and Genres) builded")
+                    
+                    self.saveAllMoviesFromNetworkToDatabase(completion: { isDone in
+                        if (isDone) {
+                            print("All movies added to database")
+                            firstAppLaunchCompletion(true)
+                        }
+                    })
+                }
+            })
+        }
+        else {
+            print("Not first launch")
+            firstAppLaunchCompletion(true)
+            
+//            var tmpGroups: [String] = []
+//
+//            for group in movieGroups {
+//                moviesNetworkDataSource.fetchMoviesByGroupName(inputGroup: group.rawValue) { completionMovieList in
+//                    for movie in completionMovieList.results {
+//                        self.allMoviesFromNetwork.append(movie)
+//                        tmpGroups.append(group.rawValue)
+//
+//                        if (group == self.movieGroups.last && movie.id == completionMovieList.results.last?.id) {
+//                            self.movieDatabaseDataSource.funkcija(inputMovieModelList: self.allMoviesFromNetwork, groupNames: tmpGroups, completion: { isDone in
+//                                if (isDone) {
+//                                    firstAppLaunchCompletion(true)
+//                                }
+//                            })
+//                        }
+//                    }
+//                }
+//            }
+            
+        }
+    }
+    
+    func getAllMoviesFromDatabase(completion: ([Movie]?) -> Void) {
+        movieDatabaseDataSource.fetchAllMoviesFromDatabase(completion: { movie in
             if let movie = movie {
                 allMoviesDatabase = movie
             }
@@ -20,36 +64,38 @@ class MoviesRepository {
         
     }
     
-    //if database is empty
-    func allMoviesFromNetworkToDatabase() {
+    //MARK: - First app launch functions
+    
+    func buildRelationships(relationshipsCompletion: @escaping (Bool) -> Void) {
+        for name in movieGroups {
+            movieDatabaseDataSource.buildGroupRelationship(inputGroupName: name.rawValue)
+        }
         
-        let listOfGroups = ["popular", "trending", "top_rated", "recommendations"]
-        
-        for group in listOfGroups {
-            moviesNetworkDataSource.fetchMoviesByGroupName(inputGroup: group) { completion in
-                for movie in completion.results {
-                    self.movieDatabaseDataSource.saveMovieFirstTime(inputMovie: movie, groupName: group)
+        moviesNetworkDataSource.fetchGenres(completion: { completionGenreList in
+            for genre in completionGenreList.genres {
+                self.movieDatabaseDataSource.buildGenreRelationship(inputGenreId: genre.id, inputGenreName: genre.name)
+            }
+            relationshipsCompletion(true)
+        })
+    }
+    
+    func saveAllMoviesFromNetworkToDatabase(completion: @escaping (Bool) -> Void) {
+        for group in movieGroups {
+            moviesNetworkDataSource.fetchMoviesByGroupName(inputGroup: group.rawValue) { completionMovieList in
+                for movie in completionMovieList.results {
+                    self.movieDatabaseDataSource.saveMovieToDatabase(inputMovie: movie, groupName: group.rawValue, completion: { isDone in
+                        if (isDone && group == self.movieGroups.last && movie.id == completionMovieList.results.last?.id) {
+                            completion(true)
+                        }
+                    })
                 }
             }
         }
     }
     
-    func getMovieGenres() {
-        moviesNetworkDataSource.fetchGenreNames(completion: { completion in
-            print(completion)
-        })
-    }
+    //MARK: - Search filtering
     
-    func relationships() {
-        let listOfGroups = ["popular", "trending", "top_rated", "recommendations"]
-        
-        for name in listOfGroups {
-            movieDatabaseDataSource.buildGroupRelationship(inputGroupName: name)
-        }
-    }
-    
-    
-    func getSearchingMovies(searchString: String, completion: ([MovieModel]?) -> Void) {
+    func getSearchingMovies(searchString: String, completion: ([Movie]?) -> Void) {
         movieDatabaseDataSource.fetchMovieSearchFiltering(filterText: searchString, completion: { movie in
             if let movie = movie {
                 allMoviesDatabase = movie
@@ -58,17 +104,39 @@ class MoviesRepository {
         })
     }
     
+    //MARK: - Fetch movies based on group and filter button
     
-    //problem
-    func getMovieTop(completion: ([MovieModel]?) -> Void) {
-        
-        movieDatabaseDataSource.fetchMoviesInsideGroup(inputNameGroup: "top_rated", completion: { movie in
+    //get movies based on group
+    func getMovieList(groupName: String, completion: ([Movie]?) -> Void) {
+        movieDatabaseDataSource.fetchMoviesByGroup(inputNameGroup: groupName, completion: { movie in
             if let movie = movie {
                 allMoviesDatabase = movie
             }
-            completion(allMoviesDatabase)
+            completion(movie)
         })
     }
     
+    //get movies based on group and filter
+    func getMovieListByFilter(groupName: String, completion: ([Movie]?) -> Void) {
+        movieDatabaseDataSource.fetchMoviesByGroupAndFilter(inputNameGroup: groupName, completion: { movie in
+            if let movie = movie {
+                allMoviesDatabase = movie
+            }
+            completion(movie)
+        })
+    }
     
+    //MARK: - Favorite movies functions
+    
+    func getFavoriteMovies(completion: ([Movie]?) -> Void) {
+        movieDatabaseDataSource.fetchFavoriteMovies(completion: { movies in
+            completion(movies)
+        })
+    }
+    
+    func changeFavoriteMovieState(inputMovie: Movie, completion: (Bool) -> Void) {
+        movieDatabaseDataSource.editMovieFavoriteState(inputMovie: inputMovie, completion: { isDone in
+            completion(isDone)
+        })
+    }
 }

@@ -1,5 +1,6 @@
 import UIKit
 import SnapKit
+import MovieAppData
 
 class MainTableViewCell: UITableViewCell {
     
@@ -20,7 +21,9 @@ class MainTableViewCell: UITableViewCell {
     
     private var networkService = NetworkService()
     
-    private var movieListModel = MovieListModel(results: [])
+    private var movieListModel: [Movie]!
+    
+    private var moviesRepository = MoviesRepository()
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -141,29 +144,24 @@ class MainTableViewCell: UITableViewCell {
         
         switch inputGroup {
         case .popular:
-            urlListName = "popular"
+            urlListName = MovieGroups.popular.rawValue
             labelName = "What's popular"
         case .trending:
-            urlListName = "trending"
+            urlListName = MovieGroups.trending.rawValue
             labelName = "Trending"
         case .topRated:
-            urlListName = "top_rated"
+            urlListName = MovieGroups.topRated.rawValue
             labelName = "Top Rated"
         case .recommendations:
-            urlListName = "recommendations"
+            urlListName = MovieGroups.recommendations.rawValue
             labelName = "Recommendations"
         }
         
-        networkService.getMovieList(listName: urlListName, completionHandler: { (result: Result<MovieListModel, RequestError>) in
-            switch result {
-            case .failure(let error):
-                print(error)
-            case .success(let value):
-                DispatchQueue.main.async {
-                    self.movieListModel = value
-                    self.collectionView.dataSource = self
-                    self.moviesGroup.text = labelName
-                }
+        moviesRepository.getMovieList(groupName: urlListName, completion: { movieList in
+            DispatchQueue.main.async {
+                self.movieListModel = movieList
+                self.collectionView.dataSource = self
+                self.moviesGroup.text = labelName
             }
         })
     }
@@ -211,7 +209,7 @@ extension MainTableViewCell: UICollectionViewDataSource {
     }
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return movieListModel.results.count
+        return movieListModel.count
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -220,7 +218,7 @@ extension MainTableViewCell: UICollectionViewDataSource {
             fatalError()
         }
         
-        cell.set(movie: movieListModel.results[indexPath.row])
+        cell.set(movie: movieListModel[indexPath.row])
         return cell
     }
 }

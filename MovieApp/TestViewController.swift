@@ -36,7 +36,7 @@ class TestViewController: UIViewController {
     
     @objc func stisni() {
         
-        moviesRepository.relationships()
+        //moviesRepository.buildRelationships()
 //        moviesRepository.allMoviesFromNetworkToDatabase()
 //        moviesRepository.getMoviesFromDatabase()
 //        moviesRepository.getMovieTop()

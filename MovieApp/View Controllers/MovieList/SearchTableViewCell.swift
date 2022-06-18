@@ -11,7 +11,7 @@ class SearchTableViewCell: UITableViewCell {
     private var movieNameLabel: UILabel!
     private var movieDescriptionLabel: UILabel!
     
-    private var cellMovie: MovieModel!
+    private var cellMovie: Movie!
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -86,11 +86,11 @@ class SearchTableViewCell: UITableViewCell {
         })
     }
     
-    func set(movie: MovieModel) {
+    func set(movie: Movie) {
         
         cellMovie = movie
         
-        let imageUrl = "https://image.tmdb.org/t/p/original" + cellMovie.posterPath
+        let imageUrl = "https://image.tmdb.org/t/p/original" + cellMovie.posterPath!
         guard let url = URL(string: imageUrl) else { return }
 
         DispatchQueue.global().async {
@@ -106,7 +106,7 @@ class SearchTableViewCell: UITableViewCell {
         movieDescriptionLabel.text = cellMovie.overview
     }
     
-    func getMovie() -> MovieModel {
+    func getMovie() -> Movie {
         return cellMovie
     }
     

@@ -22,24 +22,34 @@ class MovieListViewController: UIViewController {
     
     //network check
     private let networkMonitor = NetworkMonitor()
+    
+    private var allMoviesDatabase: [Movie] = []
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
-//        moviesRepository.getAllMoviesFromDatabase(completion: { movieList in
-//            print(movieList?.count)
-//        })
-        
-        moviesRepository.getMovieTop(completion: { movieList in
-            print(movieList?.count)
+        moviesRepository.appLaunch(firstAppLaunchCompletion: { isDone in
+            if (isDone) {
+                print("BuildViews")
+                
+                //otkomentiraj
+                DispatchQueue.main.async {
+                    self.buildViews()
+                    self.buildConstraints()
+                }
+                
+                
+                self.moviesRepository.getAllMoviesFromDatabase(completion: { movieArray in
+                    self.allMoviesDatabase = movieArray!
+                    print(self.allMoviesDatabase.count)
+                    //print(self.allMoviesDatabase.first?.genreIds)
+                })
+            }
         })
         
-        
-        //moviesRepository.relationships()
-        //moviesRepository.allMoviesFromNetworkToDatabase()
-
-        buildViews()
-        buildConstraints()
+//        self.moviesRepository.getAllMoviesFromDatabase(completion: { movieArray in
+//            self.allMoviesDatabase = movieArray!
+//        })
         
         searchingState = false
         typingState = false

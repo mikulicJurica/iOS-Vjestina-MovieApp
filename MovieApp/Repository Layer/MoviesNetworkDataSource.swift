@@ -18,7 +18,7 @@ class MoviesNetworkDataSource {
         })
     }
     
-    func fetchGenreNames(completion: @escaping (GenreListModel) -> Void) {
+    func fetchGenres(completion: @escaping (GenreListModel) -> Void) {
         networkService.getGenreList(completionHandler: { (result: Result<GenreListModel, RequestError>) in
             switch result {
             case .failure(let error):

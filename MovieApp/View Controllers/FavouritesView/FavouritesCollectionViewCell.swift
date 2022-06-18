@@ -9,7 +9,9 @@ class FavouritesCollectionViewCell: UICollectionViewCell {
     private var movieImageView: UIImageView!
     private var favouritesButton: UIButton!
     
-    private var cellMovie: MovieModel!
+    private var cellMovie: Movie!
+    
+    private var moviesRepository = MoviesRepository()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -37,10 +39,11 @@ class FavouritesCollectionViewCell: UICollectionViewCell {
         cellView.addSubview(movieImageView)
         
         favouritesButton = UIButton()
-        favouritesButton.setImage(UIImage(systemName: "heart", withConfiguration: UIImage.SymbolConfiguration(scale: .medium)), for: .normal)
+        favouritesButton.setImage(UIImage(systemName: "heart.fill", withConfiguration: UIImage.SymbolConfiguration(scale: .medium)), for: .normal)
         favouritesButton.backgroundColor = StyleConstants.AppColors.darkGrayOpaque
         favouritesButton.layer.cornerRadius = CGFloat(StyleConstants.CollectionViewCellLengths.favouritesButtonSize/2.0)
         favouritesButton.tintColor = UIColor.white
+        favouritesButton.addTarget(self, action: #selector(changeFavoriteState), for: .touchUpInside)
         cellView.addSubview(favouritesButton)
     }
 
@@ -59,10 +62,10 @@ class FavouritesCollectionViewCell: UICollectionViewCell {
         })
     }
     
-    func set(inputMovie: MovieModel) {
+    func set(inputMovie: Movie) {
         cellMovie = inputMovie
         
-        let imageUrl = "https://image.tmdb.org/t/p/original" + cellMovie.posterPath
+        let imageUrl = "https://image.tmdb.org/t/p/original" + cellMovie.posterPath!
         guard let url = URL(string: imageUrl) else { return }
 
         DispatchQueue.global().async {
@@ -72,11 +75,33 @@ class FavouritesCollectionViewCell: UICollectionViewCell {
             
             DispatchQueue.main.async {
                 self.movieImageView.image = image
+                
+                if (self.cellMovie.favorite) {
+                    self.favouritesButton.setImage(UIImage(systemName: "heart.fill", withConfiguration: UIImage.SymbolConfiguration(scale: .medium)), for: .normal)
+                }
+                else {
+                    self.favouritesButton.setImage(UIImage(systemName: "heart", withConfiguration: UIImage.SymbolConfiguration(scale: .medium)), for: .normal)
+                }
             }
         }
     }
     
-    func returnMovieFunction() -> MovieModel {
+    func returnMovieFunction() -> Movie {
         return cellMovie
+    }
+    
+    @objc private func changeFavoriteState() {
+        moviesRepository.changeFavoriteMovieState(inputMovie: cellMovie, completion: { isDone in
+            if (isDone) {
+                if (cellMovie.favorite) {
+                    cellMovie.favorite = false
+                    favouritesButton.setImage(UIImage(systemName: "heart", withConfiguration: UIImage.SymbolConfiguration(scale: .medium)), for: .normal)
+                }
+                else {
+                    cellMovie.favorite = true
+                    favouritesButton.setImage(UIImage(systemName: "heart.fill", withConfiguration: UIImage.SymbolConfiguration(scale: .medium)), for: .normal)
+                }
+            }
+        })
     }
 }

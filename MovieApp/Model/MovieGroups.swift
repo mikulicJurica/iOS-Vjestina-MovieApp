@@ -1,16 +1,10 @@
 import Foundation
 
-enum MovieGroups: CaseIterable {
+enum MovieGroups: String, CaseIterable {
 
-    case popular
-    case trending
-    case topRated
-    case recommendations
-
-    enum CodingKeys: String, CodingKey {
-        case popular = "popular"
-        case trending = "trending"
-        case topRated = "top_rated"
-        case recommendations = "recommendations"
-    }
+    case popular = "popular"
+    case trending = "trending"
+    case topRated = "top_rated"
+    case recommendations = "recommendations"
+    
 }

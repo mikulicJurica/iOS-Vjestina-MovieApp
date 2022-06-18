@@ -15,8 +15,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let movieListViewController = UINavigationController(rootViewController: MovieListViewController())
         let favouritesViewController = UINavigationController(rootViewController: FavouritesViewController())
         
-        //let vc = UINavigationController(rootViewController: TestViewController())
-        
         movieListViewController.tabBarItem = UITabBarItem(title: "Home", image: UIImage(named: "home"), selectedImage: UIImage(named: "home_app_pressed"))
         favouritesViewController.tabBarItem = UITabBarItem(title: "Favourites", image: UIImage(named: "favorites"), selectedImage: UIImage(named: "favorites_app_pressed"))
         

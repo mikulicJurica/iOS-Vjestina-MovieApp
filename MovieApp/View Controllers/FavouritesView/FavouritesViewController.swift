@@ -7,16 +7,34 @@ class FavouritesViewController: UIViewController {
     private var favouritesLabel: UILabel!
     private var favouritesCollectionView: UICollectionView!
     
-    private var favouritesMovieListModel: [MovieModel] = []
+    private var favouritesMovieListModel: [Movie] = []
     private var moviesRepository = MoviesRepository()
+    
+    override func viewWillAppear(_ animated: Bool) {
+        print("viewWillAppear")
+        if (isViewLoaded) {
+            moviesRepository.getFavoriteMovies(completion: { movieList in
+                favouritesMovieListModel = movieList!
+                
+                DispatchQueue.main.async {
+                    self.favouritesCollectionView.reloadData()
+                }
+            })
+        }
+        
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        moviesRepository.getAllMoviesFromDatabase(completion: { movieList in
+        moviesRepository.getFavoriteMovies(completion: { movieList in
             self.favouritesMovieListModel = movieList!
-            self.buildViews()
-            self.buildConstraints()
+            
+            DispatchQueue.main.async {
+                self.buildViews()
+                self.buildConstraints()
+            }
+            
         })
         
     }
