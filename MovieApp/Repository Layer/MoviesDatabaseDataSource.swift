@@ -405,6 +405,16 @@ class MoviesDatabaseDataSource {
         }
     }
     
+    func fetchAllGenresFromDatabase(completion: ([MovieGenre]?) -> Void) {
+        do {
+            let genres = try managedContext.fetch(MovieGenre.fetchRequest())
+            completion(genres)
+            
+        } catch let error as NSError {
+            print("Could not fetch. \(error), \(error.userInfo)")
+        }
+    }
+    
     //MARK: - Search Filtering
     
     func fetchMovieSearchFiltering(filterText: String, completion: ([Movie]?) -> Void) {

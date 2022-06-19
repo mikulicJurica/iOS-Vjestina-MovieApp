@@ -168,7 +168,12 @@ class MovieDetailsViewController: UIViewController {
         let url = URL(string: imageUrl)
         let data = try? Data(contentsOf: url!)
         
-        imageMovieView = UIImageView(image: UIImage(data: data!))
+        if (data != nil) {
+            imageMovieView = UIImageView(image: UIImage(data: data!))
+        }
+        else {
+            imageMovieView = UIImageView(image: UIImage(named: "nopicture"))
+        }
         
         imageMovieView.contentMode = UIView.ContentMode.scaleAspectFill
         imageMovieView.clipsToBounds = true
@@ -200,13 +205,22 @@ class MovieDetailsViewController: UIViewController {
         movieDescription = UILabel()
         movieDescription.textColor = UIColor.white
         movieDescription.font = UIFont(name: "Verdana", size: 14)
-        
-        
-        //print(movie.)
-        
-        
-        movieDescription.text = "Action, Science Fiction, Adventure"
         movieDetailsTopView.addSubview(movieDescription)
+        let tmpMovieGenres = movie.genreIds
+        var movieGenresString = ""
+        moviesRepository.getAllGenres(completion: { genres in
+            for genreDatabase in genres! {
+                for genreMovie in tmpMovieGenres! {
+                    if (genreDatabase.id == genreMovie) {
+                        movieGenresString += genreDatabase.name!
+                        movieGenresString += ", "
+                    }
+                }
+            }
+            movieGenresString.removeLast(2)
+        })
+        movieDescription.text = movieGenresString
+        
         
         movieLength = UILabel()
         movieLength.textColor = UIColor.white

@@ -24,6 +24,7 @@ class MovieListViewController: UIViewController {
     private let networkMonitor = NetworkMonitor()
     
     private var allMoviesDatabase: [Movie] = []
+    private var allGenresDatabase: [MovieGenre] = []
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -32,23 +33,17 @@ class MovieListViewController: UIViewController {
             if (isDone) {
                 print("BuildViews")
                 
-                //otkomentiraj
                 DispatchQueue.main.async {
                     self.buildViews()
                     self.buildConstraints()
                 }
-                
-                
-                self.moviesRepository.getAllMoviesFromDatabase(completion: { movieArray in
-                    self.allMoviesDatabase = movieArray!
-                    print(self.allMoviesDatabase.count)
-                    //print(self.allMoviesDatabase.first?.genreIds)
-                })
             }
         })
         
-//        self.moviesRepository.getAllMoviesFromDatabase(completion: { movieArray in
-//            self.allMoviesDatabase = movieArray!
+//        moviesRepository.getAllGenres(completion: { genres in
+//            print(genres?.count)
+//            //completion(allGenresDatabase)
+//            
 //        })
         
         searchingState = false
@@ -95,7 +90,7 @@ class MovieListViewController: UIViewController {
             .font: font!,
             .foregroundColor: StyleConstants.AppColors.textLightGray
         ]
-        let attributedSearchText = NSAttributedString(string: "Search", attributes: attributes)
+        let attributedSearchText = NSAttributedString(string: "Press Enter for search", attributes: attributes)
 
         searchBarTextField.attributedPlaceholder = attributedSearchText
         searchBarTextField.delegate = self
@@ -202,7 +197,7 @@ class MovieListViewController: UIViewController {
             .font: font!,
             .foregroundColor: StyleConstants.AppColors.textLightGray
         ]
-        let attributedSearchText = NSAttributedString(string: "Search", attributes: attributes)
+        let attributedSearchText = NSAttributedString(string: "Press Enter for search", attributes: attributes)
 
         searchBarTextField.text!.removeAll()
         searchBarTextField.attributedPlaceholder = attributedSearchText
@@ -264,11 +259,6 @@ extension MovieListViewController: UITextFieldDelegate {
         if (typingState == false) {
             buildSearchBarTyping()
             buildSearchBarTypingConstraints()
-            
-//            if (searchTableViewController != nil) {
-//                print("removed searchtableview")
-//                removeChildVC(searchTableViewController)
-//            }
             
             typingState = true
         }

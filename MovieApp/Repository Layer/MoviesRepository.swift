@@ -8,6 +8,7 @@ class MoviesRepository {
     
     private var allMoviesDatabase: [Movie] = []
     private var allMoviesFromNetwork: [MovieModel] = []
+    private var allGenresDatabase: [MovieGenre] = []
     private let movieGroups = MovieGroups.allCases
     
     func appLaunch(firstAppLaunchCompletion: @escaping (Bool) -> Void) {
@@ -63,6 +64,7 @@ class MoviesRepository {
         })
         
     }
+    
     
     //MARK: - First app launch functions
     
@@ -139,4 +141,16 @@ class MoviesRepository {
             completion(isDone)
         })
     }
+    
+    //MARK: - To see what genres do exist
+    
+    func getAllGenres(completion: ([MovieGenre]?) -> Void) {
+        movieDatabaseDataSource.fetchAllGenresFromDatabase(completion: { genre in
+            if let genre = genre {
+                allGenresDatabase = genre
+            }
+            completion(allGenresDatabase)
+        })
+    }
+    
 }

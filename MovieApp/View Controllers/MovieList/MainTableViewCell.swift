@@ -19,9 +19,8 @@ class MainTableViewCell: UITableViewCell {
     
     private var movieGroups = MovieGroups.allCases
     
-    private var networkService = NetworkService()
-    
     private var movieListModel: [Movie]!
+    private var allGenresDatabase: [MovieGenre] = []
     
     private var moviesRepository = MoviesRepository()
 
@@ -84,7 +83,7 @@ class MainTableViewCell: UITableViewCell {
         scrollView.snp.makeConstraints({
             $0.top.equalTo(moviesGroup.snp.bottom).offset(8)
             $0.leading.trailing.equalToSuperview()
-            $0.height.equalTo(30)//za sad
+            $0.height.equalTo(30)
         })
         
         contentScrollView.snp.makeConstraints({
@@ -106,67 +105,78 @@ class MainTableViewCell: UITableViewCell {
     
     func set(inputGroup: MovieGroups) {
         
-        networkService.getGenreList(completionHandler: {(result: Result<GenreListModel, RequestError>) in
-            switch result {
-            case .success(let value):
-                DispatchQueue.main.async {
-                    let buttonFont = UIFont(name: "Verdana", size: 16)
-                    let buttonAttributes: [NSAttributedString.Key: Any] = [.font: buttonFont!, .foregroundColor: StyleConstants.AppColors.textLightGray]
-                    let buttonAttributesBlack: [NSAttributedString.Key: Any] = [.font: buttonFont!, .foregroundColor: UIColor.black, .underlineStyle: NSUnderlineStyle.thick.rawValue]
-                    
-                    for i in (0...value.genres.count - 1) {
-                        let tmpButton = UIButton()
-                        if (i == 0) {
-                            let buttonAttributedText = NSAttributedString(string: value.genres[i].name, attributes: buttonAttributesBlack)
-                            tmpButton.setAttributedTitle(buttonAttributedText, for: .normal)
-                            tmpButton.tag = (i + 1)
-                            tmpButton.addTarget(self, action: #selector(self.buttonFilterTap(sender:)), for: .touchUpInside)
-                            self.buttonList.append(tmpButton)
-                            self.buttonFiltersStackView.addArrangedSubview(tmpButton)
-                        }
-                        else {
-                            let buttonAttributedText = NSAttributedString(string: value.genres[i].name, attributes: buttonAttributes)
-                            tmpButton.setAttributedTitle(buttonAttributedText, for: .normal)
-                            tmpButton.tag = (i + 1)
-                            tmpButton.addTarget(self, action: #selector(self.buttonFilterTap(sender:)), for: .touchUpInside)
-                            self.buttonList.append(tmpButton)
-                            self.buttonFiltersStackView.addArrangedSubview(tmpButton)
-                        }
+        moviesRepository.getAllGenres(completion: { genres in
+            DispatchQueue.main.async {
+                self.allGenresDatabase = genres!
+                
+                let buttonFont = UIFont(name: "Verdana", size: 16)
+                let buttonAttributes: [NSAttributedString.Key: Any] = [.font: buttonFont!, .foregroundColor: StyleConstants.AppColors.textLightGray]
+                let buttonAttributesBlack: [NSAttributedString.Key: Any] = [.font: buttonFont!, .foregroundColor: UIColor.black, .underlineStyle: NSUnderlineStyle.thick.rawValue]
+                
+                for i in (0...genres!.count - 1) {
+                    let tmpButton = UIButton()
+                    if (i == 0) {
+                        let buttonAttributedText = NSAttributedString(string: genres![i].name!, attributes: buttonAttributesBlack)
+                        tmpButton.setAttributedTitle(buttonAttributedText, for: .normal)
+                        tmpButton.tag = (i + 1)
+                        tmpButton.addTarget(self, action: #selector(self.buttonFilterTap(sender:)), for: .touchUpInside)
+                        self.buttonList.append(tmpButton)
+                        self.buttonFiltersStackView.addArrangedSubview(tmpButton)
+                    }
+                    else {
+                        let buttonAttributedText = NSAttributedString(string: genres![i].name!, attributes: buttonAttributes)
+                        tmpButton.setAttributedTitle(buttonAttributedText, for: .normal)
+                        tmpButton.tag = (i + 1)
+                        tmpButton.addTarget(self, action: #selector(self.buttonFilterTap(sender:)), for: .touchUpInside)
+                        self.buttonList.append(tmpButton)
+                        self.buttonFiltersStackView.addArrangedSubview(tmpButton)
                     }
                 }
-            case .failure(let error):
-                print(error)
-            }
-        })
-        
-        let urlListName: String!
-        let labelName: String!
-        
-        switch inputGroup {
-        case .popular:
-            urlListName = MovieGroups.popular.rawValue
-            labelName = "What's popular"
-        case .trending:
-            urlListName = MovieGroups.trending.rawValue
-            labelName = "Trending"
-        case .topRated:
-            urlListName = MovieGroups.topRated.rawValue
-            labelName = "Top Rated"
-        case .recommendations:
-            urlListName = MovieGroups.recommendations.rawValue
-            labelName = "Recommendations"
-        }
-        
-        moviesRepository.getMovieList(groupName: urlListName, completion: { movieList in
-            DispatchQueue.main.async {
-                self.movieListModel = movieList
-                self.collectionView.dataSource = self
-                self.moviesGroup.text = labelName
+                
+                let listName: String!
+                let labelName: String!
+                
+                switch inputGroup {
+                case .popular:
+                    listName = MovieGroups.popular.rawValue
+                    labelName = "What's popular"
+                case .trending:
+                    listName = MovieGroups.trending.rawValue
+                    labelName = "Trending"
+                case .topRated:
+                    listName = MovieGroups.topRated.rawValue
+                    labelName = "Top Rated"
+                case .recommendations:
+                    listName = MovieGroups.recommendations.rawValue
+                    labelName = "Recommendations"
+                }
+                
+                self.moviesRepository.getMovieList(groupName: listName, completion: { movieList in
+                    var tmpMovieList: [Movie] = []
+                    for movie in movieList! {
+                        let tmpMovieGenres = movie.genreIds
+                        for movieGenreId in tmpMovieGenres! {
+                            if (movieGenreId == self.allGenresDatabase.first!.id) {
+                                tmpMovieList.append(movie)
+                            }
+                        }
+                    }
+                    
+                    DispatchQueue.main.async {
+                        self.movieListModel = tmpMovieList
+                        self.collectionView.dataSource = self
+                        self.moviesGroup.text = labelName
+                    }
+                })
+                
             }
         })
     }
     
     @objc private func buttonFilterTap(sender: UIButton) {
+        
+        print(sender)
+        
         let buttonFont = UIFont(name: "Verdana", size: 16)
         let buttonAttributes: [NSAttributedString.Key: Any] = [.font: buttonFont!, .foregroundColor: StyleConstants.AppColors.textLightGray]
         let buttonAttributesBlack: [NSAttributedString.Key: Any] = [.font: buttonFont!, .foregroundColor: UIColor.black, .underlineStyle: NSUnderlineStyle.thick.rawValue]

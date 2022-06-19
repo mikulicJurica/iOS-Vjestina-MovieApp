@@ -76,10 +76,13 @@ class CollectionViewCell: UICollectionViewCell {
         
         let imageUrl = "https://image.tmdb.org/t/p/original" + cellMovie.posterPath!
         guard let url = URL(string: imageUrl) else { return }
-
+        
         DispatchQueue.global().async {
-            guard let imageData = try? Data(contentsOf: url) else { return }
-
+            guard let imageData = try? Data(contentsOf: url)
+            else {
+                return
+            }
+            
             let image = UIImage(data: imageData)
             
             DispatchQueue.main.async {

@@ -32,7 +32,6 @@ class SearchTableViewController: UIViewController {
             self.searchingMovieModel = movieList!
             self.buildTableSearchingListView()
             self.addSearchingListConstraints()
-            print(searchingMovieModel.count)
         })
     }
     
