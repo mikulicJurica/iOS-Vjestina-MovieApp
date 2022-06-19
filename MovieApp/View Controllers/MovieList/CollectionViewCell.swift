@@ -8,6 +8,10 @@ class CollectionViewCell: UICollectionViewCell {
     private var cellView: UIView!
     private var movieImageView: UIImageView!
     private var favouritesButton: UIButton!
+    private var favouritesImageFill: UIImageView!
+    
+    private let favouritesImageFillSize: Float = 14.0
+    private let favouritesImageNormalSize: Float = 0.4
     
     private var cellMovie: Movie!
     
@@ -44,6 +48,11 @@ class CollectionViewCell: UICollectionViewCell {
         favouritesButton.layer.cornerRadius = CGFloat(StyleConstants.CollectionViewCellLengths.favouritesButtonSize/2.0)
         favouritesButton.tintColor = UIColor.white
         favouritesButton.addTarget(self, action: #selector(changeFavoriteState), for: .touchUpInside)
+        
+        favouritesImageFill = UIImageView(image: UIImage(named: "favorites"))
+        favouritesImageFill.layer.opacity = 0
+        favouritesImageFill.contentMode = UIView.ContentMode.scaleAspectFill
+        favouritesButton.addSubview(favouritesImageFill)
         cellView.addSubview(favouritesButton)
     }
 
@@ -77,10 +86,10 @@ class CollectionViewCell: UICollectionViewCell {
                 self.movieImageView.image = image
                 
                 if (self.cellMovie.favorite) {
-                    self.favouritesButton.setImage(UIImage(systemName: "heart.fill", withConfiguration: UIImage.SymbolConfiguration(scale: .medium)), for: .normal)
+                    self.makeFavoriteToFill()
                 }
                 else {
-                    self.favouritesButton.setImage(UIImage(systemName: "heart", withConfiguration: UIImage.SymbolConfiguration(scale: .medium)), for: .normal)
+                    self.makeFavoriteToNormal()
                 }
             }
         }
@@ -95,13 +104,51 @@ class CollectionViewCell: UICollectionViewCell {
             if (isDone) {
                 if (cellMovie.favorite) {
                     cellMovie.favorite = false
-                    favouritesButton.setImage(UIImage(systemName: "heart", withConfiguration: UIImage.SymbolConfiguration(scale: .medium)), for: .normal)
+                    UIView.animate(withDuration: 0.5, animations: {
+                        self.remakeFavoriteToNormal()
+                        self.cellView.layoutIfNeeded()
+                    })
                 }
                 else {
                     cellMovie.favorite = true
-                    favouritesButton.setImage(UIImage(systemName: "heart.fill", withConfiguration: UIImage.SymbolConfiguration(scale: .medium)), for: .normal)
+                    UIView.animate(withDuration: 0.5, animations: {
+                        self.remakeFavoriteToFill()
+                        self.cellView.layoutIfNeeded()
+                    })
                 }
             }
         })
+    }
+    
+    private func makeFavoriteToFill() {
+        favouritesImageFill.layer.opacity = 1
+        favouritesImageFill.snp.makeConstraints({
+            $0.width.height.equalTo(favouritesImageFillSize)
+            $0.center.equalToSuperview()
+        })
+    }
+    
+    private func makeFavoriteToNormal() {
+        favouritesImageFill.snp.makeConstraints({
+            $0.width.height.equalTo(favouritesImageNormalSize)
+            $0.center.equalToSuperview()
+        })
+        favouritesImageFill.layer.opacity = 0
+    }
+    
+    private func remakeFavoriteToFill() {
+        favouritesImageFill.layer.opacity = 1
+        favouritesImageFill.snp.remakeConstraints({
+            $0.width.height.equalTo(favouritesImageFillSize)
+            $0.center.equalToSuperview()
+        })
+    }
+    
+    private func remakeFavoriteToNormal() {
+        favouritesImageFill.snp.remakeConstraints({
+            $0.width.height.equalTo(favouritesImageNormalSize)
+            $0.center.equalToSuperview()
+        })
+        favouritesImageFill.layer.opacity = 0
     }
 }

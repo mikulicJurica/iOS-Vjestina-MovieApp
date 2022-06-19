@@ -11,7 +11,6 @@ class FavouritesViewController: UIViewController {
     private var moviesRepository = MoviesRepository()
     
     override func viewWillAppear(_ animated: Bool) {
-        print("viewWillAppear")
         if (isViewLoaded) {
             moviesRepository.getFavoriteMovies(completion: { movieList in
                 favouritesMovieListModel = movieList!

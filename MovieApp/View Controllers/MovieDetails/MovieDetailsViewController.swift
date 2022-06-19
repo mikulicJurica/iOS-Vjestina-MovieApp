@@ -40,6 +40,7 @@ class MovieDetailsViewController: UIViewController {
     private let baseLength: Float = 18.0
     private let favouritesButtonSize: Float = 32.0
     private let favouritesImageFillSize: Float = 16.0
+    private let favouritesImageNormalSize: Float = 0.4
     private let percentageViewSize: Float = 21.0
     private let textElementSpaceSize: Float = 15.0
     
@@ -226,16 +227,10 @@ class MovieDetailsViewController: UIViewController {
         favouritesButton.addSubview(favouritesImageFill)
         
         if (movie.favorite) {
-            favouritesImageFill.snp.makeConstraints({
-                $0.width.height.equalTo(favouritesImageFillSize)
-                $0.center.equalToSuperview()
-            })
+            makeFavoriteToFill()
         }
         else {
-            favouritesImageFill.snp.makeConstraints({
-                $0.width.height.equalTo(0.5)
-                $0.center.equalToSuperview()
-            })
+            makeFavoriteToNormal()
         }
         movieDetailsTopView.addSubview(favouritesButton)
         
@@ -478,41 +473,52 @@ class MovieDetailsViewController: UIViewController {
         moviesRepository.changeFavoriteMovieState(inputMovie: movie, completion: { isDone in
             if (isDone) {
                 if (movie.favorite) {
-                    
                     movie.favorite = false
-                    
-                    UIView.animate(withDuration: 0.75, animations: {
-
-                        self.favouritesImageFill.snp.remakeConstraints({
-                            $0.width.height.equalTo(0.5)
-                            $0.center.equalToSuperview()
-                        })
-
+                    UIView.animate(withDuration: 0.5, animations: {
+                        self.remakeFavoriteToNormal()
                         self.view.layoutIfNeeded()
                     })
                 }
                 else {
-                    
                     movie.favorite = true
-                    
-                    //favouritesImageFill.isHidden = false
-                    
-//                    favouritesImageFill.snp.remakeConstraints({
-//                        $0.width.height.equalTo(0.5)
-//                        $0.center.equalToSuperview()
-//                    })
-                    
-                    UIView.animate(withDuration: 0.75, animations: {
-
-                        self.favouritesImageFill.snp.remakeConstraints({
-                            $0.width.height.equalTo(self.favouritesImageFillSize)
-                            $0.center.equalToSuperview()
-                        })
-
+                    UIView.animate(withDuration: 0.5, animations: {
+                        self.remakeFavoriteToFill()
                         self.view.layoutIfNeeded()
                     })
                 }
             }
         })
+    }
+    
+    private func makeFavoriteToFill() {
+        favouritesImageFill.layer.opacity = 1
+        favouritesImageFill.snp.makeConstraints({
+            $0.width.height.equalTo(favouritesImageFillSize)
+            $0.center.equalToSuperview()
+        })
+    }
+    
+    private func makeFavoriteToNormal() {
+        favouritesImageFill.snp.makeConstraints({
+            $0.width.height.equalTo(favouritesImageNormalSize)
+            $0.center.equalToSuperview()
+        })
+        favouritesImageFill.layer.opacity = 0
+    }
+    
+    private func remakeFavoriteToFill() {
+        favouritesImageFill.layer.opacity = 1
+        favouritesImageFill.snp.remakeConstraints({
+            $0.width.height.equalTo(favouritesImageFillSize)
+            $0.center.equalToSuperview()
+        })
+    }
+    
+    private func remakeFavoriteToNormal() {
+        favouritesImageFill.snp.remakeConstraints({
+            $0.width.height.equalTo(favouritesImageNormalSize)
+            $0.center.equalToSuperview()
+        })
+        favouritesImageFill.layer.opacity = 0
     }
 }
