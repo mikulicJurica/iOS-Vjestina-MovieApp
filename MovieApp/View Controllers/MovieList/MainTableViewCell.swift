@@ -18,6 +18,7 @@ class MainTableViewCell: UITableViewCell {
     private var collectionView: UICollectionView!
     
     private var movieGroups = MovieGroups.allCases
+    private var movieGroup: MovieGroups!
     
     private var movieListModel: [Movie]!
     private var allGenresDatabase: [MovieGenre] = []
@@ -104,6 +105,7 @@ class MainTableViewCell: UITableViewCell {
     }
     
     func set(inputGroup: MovieGroups) {
+        movieGroup = inputGroup
         
         moviesRepository.getAllGenres(completion: { genres in
             DispatchQueue.main.async {
@@ -173,24 +175,47 @@ class MainTableViewCell: UITableViewCell {
         })
     }
     
+    public func osvjezi() {
+        collectionView.reloadData()
+        print("osvjezi")
+    }
+    
     @objc private func buttonFilterTap(sender: UIButton) {
         
-        print(sender)
+        print(movieGroup.rawValue)
         
         let buttonFont = UIFont(name: "Verdana", size: 16)
         let buttonAttributes: [NSAttributedString.Key: Any] = [.font: buttonFont!, .foregroundColor: StyleConstants.AppColors.textLightGray]
         let buttonAttributesBlack: [NSAttributedString.Key: Any] = [.font: buttonFont!, .foregroundColor: UIColor.black, .underlineStyle: NSUnderlineStyle.thick.rawValue]
         
-        for i in (1...buttonList.count - 1) {
-            if (i == sender.tag) {
-                let buttonAttributedText = NSAttributedString(string: (buttonList[i].titleLabel?.text)!, attributes: buttonAttributesBlack)
-                buttonList[i].setAttributedTitle(buttonAttributedText, for: .normal)
+        
+        self.moviesRepository.getMovieList(groupName: movieGroup.rawValue, completion: { movieList in
+            var tmpMovieList: [Movie] = []
+            for movie in movieList! {
+                let tmpMovieGenres = movie.genreIds
+                for movieGenreId in tmpMovieGenres! {
+                    if (movieGenreId == self.allGenresDatabase[sender.tag - 1].id) {
+                        tmpMovieList.append(movie)
+                    }
+                }
             }
-            else {
-                let buttonAttributedText = NSAttributedString(string: (buttonList[i].titleLabel?.text)!, attributes: buttonAttributes)
-                buttonList[i].setAttributedTitle(buttonAttributedText, for: .normal)
+            
+            DispatchQueue.main.async {
+                self.movieListModel = tmpMovieList
+                self.collectionView.reloadData()
+                
+                for i in (1...self.buttonList.count - 1) {
+                    if (i == sender.tag) {
+                        let buttonAttributedText = NSAttributedString(string: (self.buttonList[i].titleLabel?.text)!, attributes: buttonAttributesBlack)
+                        self.buttonList[i].setAttributedTitle(buttonAttributedText, for: .normal)
+                    }
+                    else {
+                        let buttonAttributedText = NSAttributedString(string: (self.buttonList[i].titleLabel?.text)!, attributes: buttonAttributes)
+                        self.buttonList[i].setAttributedTitle(buttonAttributedText, for: .normal)
+                    }
+                }
             }
-        }
+        })
     }
 }
 

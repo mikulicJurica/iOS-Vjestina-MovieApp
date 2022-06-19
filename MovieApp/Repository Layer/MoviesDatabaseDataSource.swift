@@ -103,6 +103,8 @@ class MoviesDatabaseDataSource {
         })
     }
     
+    //funkcija kod vec pune baze, osvjezavanje baze dobro, delete i dodavanje novih treba provjeriti
+    
     func funkcija(inputMovieModelList: [MovieModel], groupNames: [String], completion: (Bool) -> Void) {
         let tmpGroups = groupNames
         var tmpUpdatedPositions: [Int] = []
@@ -245,6 +247,7 @@ class MoviesDatabaseDataSource {
 
     }
     
+    //MARK: - Functions related with certain movies and database
     
     func checkForMovieInDatabase(inputMovie: MovieModel, completion: (Bool, Movie?) -> Void) {
         do {
@@ -430,10 +433,6 @@ class MoviesDatabaseDataSource {
             print("Could not fetch. \(error), \(error.userInfo)")
         }
     }
-    
-    
-    
-    
     
     func deleteMovie(inputMovie: MovieModel) {
         

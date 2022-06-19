@@ -34,18 +34,12 @@ class MovieDetailsViewController: UIViewController {
     private var upperStackView: UIStackView!
     private var lowerStackView: UIStackView!
     
-    //style
+    //animation constraints
     private var animationConstraint: CGFloat!
-    private let movieDetailsTopViewHeight: Float = 400.0
-    private let baseLength: Float = 18.0
-    private let favouritesButtonSize: Float = 32.0
     private let favouritesImageFillSize: Float = 16.0
     private let favouritesImageNormalSize: Float = 0.4
-    private let percentageViewSize: Float = 21.0
-    private let textElementSpaceSize: Float = 15.0
     
     private var movie: Movie!
-    
     private var moviesRepository = MoviesRepository()
     
     convenience init(movie: Movie) {
@@ -53,6 +47,7 @@ class MovieDetailsViewController: UIViewController {
         self.movie = movie
     }
     
+    //For Animation - all animated objects out of screen
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
@@ -60,27 +55,28 @@ class MovieDetailsViewController: UIViewController {
         
         movieTitle.snp.remakeConstraints({
             $0.centerX.equalToSuperview().offset(animationConstraint)
-            $0.bottom.equalTo(movieDate.snp.top).offset(-textElementSpaceSize/2)
+            $0.bottom.equalTo(movieDate.snp.top).offset(-StyleConstants.MovieDetailsVCLengths.textElementSpaceSize/2)
         })
         
         movieDate.snp.remakeConstraints({
             $0.centerX.equalToSuperview().offset(animationConstraint)
-            $0.bottom.equalTo(movieDescription.snp.top).offset(-textElementSpaceSize/5)
+            $0.bottom.equalTo(movieDescription.snp.top).offset(-StyleConstants.MovieDetailsVCLengths.textElementSpaceSize/5)
         })
         
         movieDescription.snp.remakeConstraints({
             $0.centerX.equalToSuperview().offset(animationConstraint)
-            $0.bottom.equalTo(favouritesButton.snp.top).offset(-textElementSpaceSize)
+            $0.bottom.equalTo(favouritesButton.snp.top).offset(-StyleConstants.MovieDetailsVCLengths.textElementSpaceSize)
         })
     }
     
+    //For Animation - animate objects
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
         UIView.animate(withDuration: 1, delay: 0, options: .curveLinear, animations: {
             self.movieTitle.snp.remakeConstraints {
-                $0.leading.trailing.equalToSuperview().inset(self.baseLength)
-                $0.bottom.equalTo(self.movieDate.snp.top).offset(-self.textElementSpaceSize/2)
+                $0.leading.trailing.equalToSuperview().inset(StyleConstants.MovieDetailsVCLengths.baseLength)
+                $0.bottom.equalTo(self.movieDate.snp.top).offset(-StyleConstants.MovieDetailsVCLengths.textElementSpaceSize/2)
             }
             
             self.view.layoutIfNeeded()
@@ -88,8 +84,8 @@ class MovieDetailsViewController: UIViewController {
         
         UIView.animate(withDuration: 1, delay: 0.5, options: .curveLinear, animations: {
             self.movieDate.snp.remakeConstraints {
-                $0.leading.trailing.equalToSuperview().inset(self.baseLength)
-                $0.bottom.equalTo(self.movieDescription.snp.top).offset(-self.textElementSpaceSize/5)
+                $0.leading.trailing.equalToSuperview().inset(StyleConstants.MovieDetailsVCLengths.baseLength)
+                $0.bottom.equalTo(self.movieDescription.snp.top).offset(-StyleConstants.MovieDetailsVCLengths.textElementSpaceSize/5)
             }
             
             self.view.layoutIfNeeded()
@@ -97,9 +93,9 @@ class MovieDetailsViewController: UIViewController {
         
         UIView.animate(withDuration: 1, delay: 0.75, options: .curveEaseInOut, animations: {
             self.movieDescription.snp.remakeConstraints {
-                $0.leading.equalToSuperview().inset(self.baseLength)
-                $0.trailing.equalTo(self.movieLength.snp.leading).offset(-self.textElementSpaceSize/2)
-                $0.bottom.equalTo(self.favouritesButton.snp.top).offset(-self.textElementSpaceSize)
+                $0.leading.equalToSuperview().inset(StyleConstants.MovieDetailsVCLengths.baseLength)
+                $0.trailing.equalTo(self.movieLength.snp.leading).offset(-StyleConstants.MovieDetailsVCLengths.textElementSpaceSize/2)
+                $0.bottom.equalTo(self.favouritesButton.snp.top).offset(-StyleConstants.MovieDetailsVCLengths.textElementSpaceSize)
             }
 
             self.view.layoutIfNeeded()
@@ -128,10 +124,6 @@ class MovieDetailsViewController: UIViewController {
     private func TopBottomNavigationView() {
         navigationItem.titleView = UIImageView(image: UIImage(named: "topTitle"))
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(named: "back"), style: .done, target: self, action: #selector(goBack))
-    }
-    
-    @objc private func goBack() {
-        UIApplication.topViewController()?.navigationController?.popViewController(animated: true)
     }
     
     private func scrollViewFunc() {
@@ -221,7 +213,6 @@ class MovieDetailsViewController: UIViewController {
         })
         movieDescription.text = movieGenresString
         
-        
         movieLength = UILabel()
         movieLength.textColor = UIColor.white
         movieLength.font = UIFont(name: "Verdana-Bold", size: 14)
@@ -231,7 +222,7 @@ class MovieDetailsViewController: UIViewController {
         
         favouritesButton = UIButton()
         favouritesButton.backgroundColor = StyleConstants.AppColors.appBlack
-        favouritesButton.layer.cornerRadius = CGFloat(favouritesButtonSize/2.0)
+        favouritesButton.layer.cornerRadius = CGFloat(StyleConstants.MovieDetailsVCLengths.favouritesButtonSize/2.0)
         favouritesButton.tintColor = UIColor.white
         favouritesButton.setImage(UIImage(systemName: "heart", withConfiguration: UIImage.SymbolConfiguration(scale: .default)), for: .normal)
         favouritesButton.addTarget(self, action: #selector(changeFavoriteState), for: .touchUpInside)
@@ -355,6 +346,8 @@ class MovieDetailsViewController: UIViewController {
         return overviewPeopleView
     }
     
+    //MARK: - Constraints
+    
     private func scrollViewConstraints() {
         scrollView.snp.makeConstraints({
             $0.top.bottom.leading.trailing.equalTo(view.safeAreaLayoutGuide)
@@ -381,7 +374,7 @@ class MovieDetailsViewController: UIViewController {
         
         movieDetailsTopView.snp.makeConstraints({
             $0.top.leading.trailing.equalToSuperview()
-            $0.height.equalTo(movieDetailsTopViewHeight)
+            $0.height.equalTo(StyleConstants.MovieDetailsVCLengths.movieDetailsTopViewHeight)
         })
         
         imageMovieView.snp.makeConstraints({
@@ -393,50 +386,45 @@ class MovieDetailsViewController: UIViewController {
         })
         
         favouritesButton.snp.makeConstraints({
-            $0.width.height.equalTo(favouritesButtonSize)
-            $0.leading.bottom.equalToSuperview().inset(baseLength)
+            $0.width.height.equalTo(StyleConstants.MovieDetailsVCLengths.favouritesButtonSize)
+            $0.leading.bottom.equalToSuperview().inset(StyleConstants.MovieDetailsVCLengths.baseLength)
         })
-        
-//        favouritesImageFill.snp.makeConstraints({
-//            $0.width.height.equalTo(favouritesImageFillSize)
-//            $0.center.equalToSuperview()
-//        })
         
         movieLength.snp.makeConstraints({
             $0.trailing.equalToSuperview().inset(60)
-            $0.bottom.equalTo(favouritesButton.snp.top).offset(-textElementSpaceSize)
+            $0.bottom.equalTo(favouritesButton.snp.top).offset(-StyleConstants.MovieDetailsVCLengths.textElementSpaceSize)
         })
         
         movieDescription.snp.makeConstraints({
-            $0.leading.equalToSuperview().inset(baseLength)
-            $0.trailing.equalTo(movieLength.snp.leading).offset(-textElementSpaceSize/2)
-            $0.bottom.equalTo(favouritesButton.snp.top).offset(-textElementSpaceSize)
+            $0.leading.equalToSuperview().inset(StyleConstants.MovieDetailsVCLengths.baseLength)
+            $0.trailing.equalTo(movieLength.snp.leading).offset(-StyleConstants.MovieDetailsVCLengths.textElementSpaceSize/2)
+            $0.bottom.equalTo(favouritesButton.snp.top).offset(-StyleConstants.MovieDetailsVCLengths.textElementSpaceSize)
         })
         
         movieDate.snp.makeConstraints({
-            $0.leading.trailing.equalToSuperview().inset(baseLength)
-            $0.bottom.equalTo(movieDescription.snp.top).offset(-textElementSpaceSize/5)
+            $0.leading.trailing.equalToSuperview().inset(StyleConstants.MovieDetailsVCLengths.baseLength)
+            $0.bottom.equalTo(movieDescription.snp.top).offset(-StyleConstants.MovieDetailsVCLengths.textElementSpaceSize/5)
         })
 
         movieTitle.snp.makeConstraints({
-            $0.leading.trailing.equalToSuperview().inset(baseLength)
-            $0.bottom.equalTo(movieDate.snp.top).offset(-textElementSpaceSize/2)
+            $0.leading.trailing.equalToSuperview().inset(StyleConstants.MovieDetailsVCLengths.baseLength)
+            $0.bottom.equalTo(movieDate.snp.top).offset(-StyleConstants.MovieDetailsVCLengths.textElementSpaceSize/2)
         })
         
         percentageView.snp.makeConstraints({
-            $0.leading.equalToSuperview().inset(baseLength+percentageViewSize)
-            $0.bottom.equalTo(movieTitle.snp.top).offset(-textElementSpaceSize)
-            $0.width.height.equalTo(percentageViewSize)
+            $0.leading.equalToSuperview().inset(StyleConstants.MovieDetailsVCLengths.baseLength+StyleConstants.MovieDetailsVCLengths.percentageViewSize)
+            $0.bottom.equalTo(movieTitle.snp.top).offset(-StyleConstants.MovieDetailsVCLengths.textElementSpaceSize)
+            $0.width.height.equalTo(StyleConstants.MovieDetailsVCLengths.percentageViewSize)
         })
         
         percentageLabel.snp.makeConstraints({
-            $0.centerX.equalTo(percentageView.snp.leading).offset(-percentageViewSize/4)
-            $0.centerY.equalToSuperview().offset(-percentageViewSize/2)
+            $0.centerX.equalTo(percentageView.snp.leading).offset(-StyleConstants.MovieDetailsVCLengths.percentageViewSize/4)
+            $0.centerY.equalToSuperview().offset(-StyleConstants.MovieDetailsVCLengths.percentageViewSize/2)
         })
         
         percentageSign.snp.makeConstraints({
             $0.leading.equalTo(percentageLabel.snp.trailing)
-            $0.bottom.equalTo(percentageLabel.snp.bottom).offset(-percentageViewSize/15)
+            $0.bottom.equalTo(percentageLabel.snp.bottom).offset(-StyleConstants.MovieDetailsVCLengths.percentageViewSize/15)
         })
         
         userScoreLabel.snp.makeConstraints({
@@ -454,19 +442,19 @@ class MovieDetailsViewController: UIViewController {
         })
         
         overviewLabel.snp.makeConstraints({
-            $0.top.leading.trailing.equalToSuperview().inset(baseLength)
+            $0.top.leading.trailing.equalToSuperview().inset(StyleConstants.MovieDetailsVCLengths.baseLength)
         })
 
         overviewDescriptionLabel.snp.makeConstraints({
-            $0.leading.trailing.equalToSuperview().inset(baseLength)
+            $0.leading.trailing.equalToSuperview().inset(StyleConstants.MovieDetailsVCLengths.baseLength)
             $0.top.equalTo(overviewLabel.snp.bottom).offset(9)
         })
     }
     
     private func peopleSectionConstraint() {
         overviewPeopleView.snp.makeConstraints({
-            $0.leading.trailing.equalToSuperview().inset(baseLength)
-            $0.top.equalTo(overviewSectionView.snp.bottom).offset(baseLength)
+            $0.leading.trailing.equalToSuperview().inset(StyleConstants.MovieDetailsVCLengths.baseLength)
+            $0.top.equalTo(overviewSectionView.snp.bottom).offset(StyleConstants.MovieDetailsVCLengths.baseLength)
         })
 
         upperStackView.snp.makeConstraints({
@@ -479,8 +467,10 @@ class MovieDetailsViewController: UIViewController {
         })
     }
     
-    func minutesToHoursAndMinutes(_ minutes: Int) -> (hours: Int , leftMinutes: Int) {
-        return (minutes / 60, (minutes % 60))
+    //MARK: - Button Functions
+    
+    @objc private func goBack() {
+        UIApplication.topViewController()?.navigationController?.popViewController(animated: true)
     }
     
     @objc private func changeFavoriteState() {
@@ -503,6 +493,8 @@ class MovieDetailsViewController: UIViewController {
             }
         })
     }
+    
+    //MARK: - Functions related to Favorite Button Animations
     
     private func makeFavoriteToFill() {
         favouritesImageFill.layer.opacity = 1
@@ -534,5 +526,11 @@ class MovieDetailsViewController: UIViewController {
             $0.center.equalToSuperview()
         })
         favouritesImageFill.layer.opacity = 0
+    }
+    
+    //MARK: - Other functions
+    
+    func minutesToHoursAndMinutes(_ minutes: Int) -> (hours: Int , leftMinutes: Int) {
+        return (minutes / 60, (minutes % 60))
     }
 }

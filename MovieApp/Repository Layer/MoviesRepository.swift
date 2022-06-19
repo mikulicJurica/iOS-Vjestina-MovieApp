@@ -33,6 +33,8 @@ class MoviesRepository {
             print("Not first launch")
             firstAppLaunchCompletion(true)
             
+            //radi update filmova, treba provjeriti delete-anje i ubacivanje novih u bazu
+            
 //            var tmpGroups: [String] = []
 //
 //            for group in movieGroups {

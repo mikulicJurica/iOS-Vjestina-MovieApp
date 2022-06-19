@@ -20,7 +20,6 @@ class FavouritesViewController: UIViewController {
                 }
             })
         }
-        
     }
     
     override func viewDidLoad() {
@@ -33,9 +32,7 @@ class FavouritesViewController: UIViewController {
                 self.buildViews()
                 self.buildConstraints()
             }
-            
         })
-        
     }
     
     private func buildViews() {
@@ -92,6 +89,8 @@ class FavouritesViewController: UIViewController {
         })
     }
 }
+
+//MARK: - CollectionView stuff
 
 extension FavouritesViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {

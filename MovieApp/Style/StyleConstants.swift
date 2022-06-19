@@ -14,6 +14,27 @@ struct StyleConstants {
         static let lightGreen = UIColor(red: 33.0/255.0, green: 208.0/255.0, blue: 122.0/255.0, alpha: 1.0)
     }
     
+    struct FontNames {
+        static let normalFont = "Helvetica Neue"
+        static let boldFont = "FONTSPRINGDEMO-ProximaNovaExtraboldRegular"
+    }
+    
+    struct MovieDetailsVCLengths {
+        static let spaceLength = 18.0
+        static let spaceLengthSmall = 10.0
+        static let searchBarHeight = 43.0
+        static let cancelButtonWidth = 60.0
+        static let magnifierImageWidth = 20.0
+        static let xImageDimensions = 13.0
+        static let spaceUnderSearchBar = 33.0
+        
+        static let movieDetailsTopViewHeight = 400.0
+        static let baseLength = 18.0
+        static let favouritesButtonSize = 32.0
+        static let percentageViewSize = 21.0
+        static let textElementSpaceSize = 15.0
+    }
+    
     struct MovieListVCLengths {
         static let spaceLength = 18.0
         static let spaceLengthSmall = 10.0

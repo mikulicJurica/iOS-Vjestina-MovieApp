@@ -9,7 +9,7 @@ class NetworkService {
     let baseUrl = "https://api.themoviedb.org/3/"
     
     func getMovieList(listName: String, completionHandler: @escaping (Result<MovieListModel, RequestError>) -> Void) {
-        let trendingInterval = "day"
+        let trendingInterval = "day" //intervals are not specified, so I picked day interval
         var url: URL!
 
         if (listName == MovieGroups.recommendations.rawValue) {

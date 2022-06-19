@@ -123,6 +123,8 @@ class CollectionViewCell: UICollectionViewCell {
         })
     }
     
+    //MARK: - Functions For Favorite Button Animations
+    
     private func makeFavoriteToFill() {
         favouritesImageFill.layer.opacity = 1
         favouritesImageFill.snp.makeConstraints({
