@@ -1,6 +1,5 @@
 import UIKit
 import SnapKit
-import MovieAppData
 
 //table view of searching movies
 class SearchTableViewController: UIViewController {
@@ -9,18 +8,31 @@ class SearchTableViewController: UIViewController {
     private var movieSearchListTableView: UITableView!
     
     let searchTableViewCellName = "MovieTableViewCell"
+    
+    private var searchTextField: UITextField!
+    
+    private var searchTextFieldText: String!
+    private var searchingMovieModel: [Movie] = []
+    private var moviesRepository = MoviesRepository()
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        buildTableSearchingListView()
-        addSearchingListConstraints()
+    init(searchTextFieldText: String, searchTextEndEditing: UITextField) {
+        self.searchTextFieldText = searchTextFieldText
+        self.searchTextField = searchTextEndEditing
+        super.init(nibName: nil, bundle: nil)
     }
     
-    func reloadListMovies() {
-        //updating list......
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
         
-        movieSearchListTableView.reloadData()
+        moviesRepository.getSearchingMovies(searchString: searchTextFieldText, completion: { movieList in
+            self.searchingMovieModel = movieList!
+            self.buildTableSearchingListView()
+            self.addSearchingListConstraints()
+        })
     }
     
     private func buildTableSearchingListView() {
@@ -29,7 +41,7 @@ class SearchTableViewController: UIViewController {
         
         //setup table view
         movieSearchListTableView.register(SearchTableViewCell.self, forCellReuseIdentifier: searchTableViewCellName)
-        movieSearchListTableView.rowHeight = styleConstants.movieTableViewCellLengths.movieCellHeight
+        movieSearchListTableView.rowHeight = StyleConstants.MovieTableViewCellLengths.movieCellHeight
         movieSearchListTableView.separatorColor = .clear
         movieSearchListTableView.delegate = self
         movieSearchListTableView.dataSource = self
@@ -47,7 +59,7 @@ extension SearchTableViewController: UITableViewDataSource {
         return 1
     }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return getNumberOfAllMovies()
+        return searchingMovieModel.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -57,14 +69,22 @@ extension SearchTableViewController: UITableViewDataSource {
             fatalError()
         }
         
-        let nameInput = getAllMovieData()[indexPath.row].title
-        let descriptionInput = getAllMovieData()[indexPath.row].description
-        let imageURLInput = getAllMovieData()[indexPath.row].imageUrl
+        let movieModel = searchingMovieModel[indexPath.row]
         
-        cell.set(movieName: nameInput, movieDescription: descriptionInput, movieImageUrl: imageURLInput)
+        cell.set(movie: movieModel)
         cell.selectionStyle = .none
         
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let currentCell = tableView.cellForRow(at: indexPath) as! SearchTableViewCell
+        let selectedMovie = currentCell.getMovie()
+        
+        let vc = MovieDetailsViewController(movie: selectedMovie)
+        UIApplication.topViewController()?.navigationController?.pushViewController(vc, animated: true)
+        
+        searchTextField.endEditing(true)
     }
 }
 
